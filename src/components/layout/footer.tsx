@@ -29,7 +29,7 @@ const footerLinks = [
     {
         title: "Help & Support",
         links: [
-            { label: "FAQ", href: "#" },
+            { label: "FAQ", href: "/faq" },
             { label: "Contact Us", href: "#" },
             { label: "Order History", href: "#" },
             { label: "Returns & Exchanges", href: "#" },
