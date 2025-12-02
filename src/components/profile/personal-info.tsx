@@ -13,7 +13,7 @@ export default function PersonalInfo() {
                 </h2>
                 <Button
                     variant="ghost"
-                    className="text-cyan-500 hover:text-cyan-600 hover:bg-cyan-50"
+                    className="text-primary hover:text-primary/80 hover:bg-primary/10"
                 >
                     Edit
                 </Button>

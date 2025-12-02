@@ -66,8 +66,8 @@ export default function AboutUsPage() {
                     <div className="grid gap-8 md:grid-cols-3">
                         {/* Value 1 */}
                         <div className="rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-                            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-cyan-100 dark:bg-cyan-950/30">
-                                <Sparkles className="h-6 w-6 text-cyan-600 dark:text-cyan-400" />
+                            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary dark:bg-primary/20">
+                                <Sparkles className="h-6 w-6 text-primary dark:text-primary" />
                             </div>
                             <h3 className="mb-3 text-xl font-bold text-zinc-900 dark:text-zinc-50">
                                 Quality Craftsmanship
@@ -170,7 +170,7 @@ export default function AboutUsPage() {
                 </section>
 
                 {/* Join the Community CTA */}
-                <section className="rounded-3xl bg-gradient-to-r from-cyan-500 to-blue-600 p-12 text-center md:p-16">
+                <section className="rounded-3xl bg-gradient-to-r from-primary to-orange-600 p-12 text-center md:p-16">
                     <h2 className="mb-4 text-3xl font-bold text-white md:text-4xl">
                         Join the Community
                     </h2>
@@ -180,7 +180,7 @@ export default function AboutUsPage() {
                     <Button
                         asChild
                         size="lg"
-                        className="rounded-full bg-white text-cyan-600 hover:bg-zinc-100"
+                        className="rounded-full bg-white text-primary hover:bg-zinc-100"
                     >
                         <Link href="/products">Shop Now</Link>
                     </Button>

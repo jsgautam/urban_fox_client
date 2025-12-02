@@ -51,7 +51,7 @@ export default function ProductInfo({
                                 className={cn(
                                     "h-4 w-4",
                                     i < Math.floor(rating)
-                                        ? "fill-cyan-400 text-cyan-400"
+                                        ? "fill-primary text-primary"
                                         : "fill-zinc-200 text-zinc-200 dark:fill-zinc-800 dark:text-zinc-800"
                                 )}
                             />
@@ -76,7 +76,7 @@ export default function ProductInfo({
                             className={cn(
                                 "h-8 w-8 rounded-full ring-2 ring-transparent ring-offset-2 transition-all hover:scale-110 dark:ring-offset-zinc-950",
                                 color.value,
-                                selectedColor === index && "ring-cyan-400"
+                                selectedColor === index && "ring-primary"
                             )}
                             aria-label={`Select ${color.name}`}
                         />
@@ -88,7 +88,7 @@ export default function ProductInfo({
             <div className="space-y-3">
                 <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-zinc-900 dark:text-zinc-50">Size</span>
-                    <button className="flex items-center gap-1 text-xs font-medium text-cyan-500 hover:text-cyan-600">
+                    <button className="flex items-center gap-1 text-xs font-medium text-primary hover:text-primary/80">
                         <Ruler className="h-3 w-3" />
                         Size Guide
                     </button>
@@ -101,8 +101,8 @@ export default function ProductInfo({
                             className={cn(
                                 "flex h-10 w-12 items-center justify-center rounded-md border text-sm font-medium transition-all",
                                 selectedSize === size
-                                    ? "border-cyan-400 bg-cyan-400/10 text-cyan-600 dark:text-cyan-400"
-                                    : "border-zinc-200 bg-transparent text-zinc-600 hover:border-zinc-900 hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-50 dark:hover:text-zinc-50"
+                                    ? "border-primary bg-primary/10 text-primary dark:text-primary"
+                                    : "border-zinc-200 bg-transparent text-zinc-600 hover:border-primary hover:text-zinc-900 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-zinc-50 dark:hover:text-zinc-50"
                             )}
                         >
                             {size}
@@ -113,7 +113,7 @@ export default function ProductInfo({
 
             {/* Actions */}
             <div className="flex flex-col gap-3">
-                <Button className="h-12 w-full rounded-full bg-cyan-400 text-base font-bold text-black hover:bg-cyan-500">
+                <Button className="h-12 w-full rounded-full bg-primary text-base font-bold text-black hover:bg-primary">
                     Add to Cart
                 </Button>
                 <Button

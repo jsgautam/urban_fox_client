@@ -46,7 +46,7 @@ export default function SavedItems() {
                 </h2>
                 <Link
                     href="/profile/saved"
-                    className="text-sm font-medium text-cyan-500 hover:text-cyan-600"
+                    className="text-sm font-medium text-primary hover:text-primary/80"
                 >
                     View Wishlist
                 </Link>

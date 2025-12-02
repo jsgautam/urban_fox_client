@@ -14,19 +14,19 @@ export default function RewardsPage() {
 
     const dailyTasks = [
         { id: 0, icon: ThumbsUp, title: "Like 3 Hoodies", progress: 1, total: 3, color: "bg-yellow-100 text-yellow-600" },
-        { id: 1, icon: Compass, title: "Explore Summer", progress: 1, total: 1, color: "bg-cyan-100 text-cyan-600" },
+        { id: 1, icon: Compass, title: "Explore Summer", progress: 1, total: 1, color: "bg-primary/10 text-primary" },
         { id: 2, icon: Share2, title: "Share an Item", progress: 0, total: 1, color: "bg-orange-100 text-orange-600" },
     ];
 
     const rewards = [
-        { id: 0, icon: Gift, title: "15% Off Your Next Order", status: "unlocked", color: "bg-cyan-100 text-cyan-600" },
-        { id: 1, icon: Star, title: "50 Wave Points", status: "claimed", color: "bg-cyan-100 text-cyan-600" },
+        { id: 0, icon: Gift, title: "15% Off Your Next Order", status: "unlocked", color: "bg-primary/10 text-primary" },
+        { id: 1, icon: Star, title: "50 Wave Points", status: "claimed", color: "bg-primary/10 text-primary" },
         { id: 2, icon: Lock, title: "Final Reward", status: "locked", subtitle: "Complete all tasks", color: "bg-zinc-100 text-zinc-400" },
     ];
 
     const badges = [
         { id: 0, icon: Flame, title: "7-Day Streak", unlocked: true, color: "bg-yellow-100 text-yellow-600" },
-        { id: 1, icon: Bird, title: "Early Bird", unlocked: true, color: "bg-cyan-100 text-cyan-600" },
+        { id: 1, icon: Bird, title: "Early Bird", unlocked: true, color: "bg-primary/10 text-primary" },
         { id: 2, icon: Diamond, title: "Top Fan", unlocked: false, color: "bg-zinc-100 text-zinc-300" },
         { id: 3, icon: Users, title: "Socialite", unlocked: false, color: "bg-zinc-100 text-zinc-300" },
         { id: 4, icon: MapPin, title: "Explorer", unlocked: false, color: "bg-zinc-100 text-zinc-300" },
@@ -65,7 +65,7 @@ export default function RewardsPage() {
                 {/* Avatar Character */}
                 <div className="mb-8 flex justify-center">
                     <div className="relative animate-bounce-slow">
-                        <div className="flex h-32 w-32 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 shadow-lg">
+                        <div className="flex h-32 w-32 items-center justify-center rounded-full bg-gradient-to-br from-primary to-orange-600 shadow-lg">
                             <span className="text-6xl">🌊</span>
                         </div>
                         {showConfetti && (
@@ -84,7 +84,7 @@ export default function RewardsPage() {
                                 Daily Progress
                             </h2>
                             <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                                Daily Streak: <span className="font-bold text-cyan-500">{streak} Days!</span>
+                                Daily Streak: <span className="font-bold text-primary">{streak} Days!</span>
                             </p>
                         </div>
                         <div className="text-sm text-zinc-600 dark:text-zinc-400">
@@ -93,7 +93,7 @@ export default function RewardsPage() {
                     </div>
                     <div className="relative h-3 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
                         <div
-                            className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 transition-all duration-1000 ease-out"
+                            className="h-full rounded-full bg-gradient-to-r from-primary to-orange-600 transition-all duration-1000 ease-out"
                             style={{ width: `${(progress / 3) * 100}%` }}
                         >
                             <div className="absolute right-0 top-0 h-full w-2 animate-pulse bg-white/50" />
@@ -132,7 +132,7 @@ export default function RewardsPage() {
                                             "w-full rounded-full",
                                             isCompleted
                                                 ? "bg-zinc-200 text-zinc-500 dark:bg-zinc-800"
-                                                : "bg-cyan-400 text-black hover:bg-cyan-500"
+                                                : "bg-primary text-black hover:bg-primary"
                                         )}
                                     >
                                         {isCompleted ? "Completed" : "Go"}
@@ -185,7 +185,7 @@ export default function RewardsPage() {
                                                 ? "bg-zinc-200 text-zinc-500 dark:bg-zinc-800"
                                                 : isLocked
                                                     ? "bg-zinc-200 text-zinc-400 dark:bg-zinc-800"
-                                                    : "animate-breathing bg-cyan-400 text-black hover:scale-105 hover:bg-cyan-500"
+                                                    : "animate-breathing bg-primary text-black hover:scale-105 hover:bg-primary"
                                         )}
                                     >
                                         {isClaimed ? "Claimed" : isLocked ? "Locked" : "Claim Now"}
@@ -228,7 +228,7 @@ export default function RewardsPage() {
                 </div>
 
                 {/* Redeem CTA */}
-                <div className="rounded-3xl bg-gradient-to-r from-cyan-500 to-blue-600 p-12 text-center">
+                <div className="rounded-3xl bg-gradient-to-r from-primary to-orange-600 p-12 text-center">
                     <h2 className="mb-4 text-3xl font-bold text-white">
                         Ready to Redeem?
                     </h2>
@@ -237,7 +237,7 @@ export default function RewardsPage() {
                     </p>
                     <Button
                         size="lg"
-                        className="animate-breathing rounded-full bg-white text-cyan-600 hover:scale-105 hover:bg-zinc-100"
+                        className="animate-breathing rounded-full bg-white text-primary hover:scale-105 hover:bg-zinc-100"
                     >
                         Redeem My Points!
                     </Button>
@@ -276,10 +276,10 @@ export default function RewardsPage() {
 
         @keyframes pulse-glow {
           0%, 100% {
-            box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.4);
+            box-shadow: 0 0 0 0 rgba(250, 155, 37, 0.4);
           }
           50% {
-            box-shadow: 0 0 20px 5px rgba(34, 211, 238, 0.2);
+            box-shadow: 0 0 20px 5px rgba(250, 155, 37, 0.2);
           }
         }
 

@@ -36,10 +36,10 @@ export default function ProductCard({ product }: ProductCardProps) {
                 {product.badge && (
                     <div
                         className={`absolute left-4 top-4 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide text-black ${product.badge.color === "new"
-                                ? "bg-yellow-400"
-                                : product.badge.color === "sale"
-                                    ? "bg-cyan-400"
-                                    : "bg-red-500 text-white"
+                            ? "bg-yellow-400"
+                            : product.badge.color === "sale"
+                                ? "bg-primary"
+                                : "bg-red-500 text-white"
                             }`}
                     >
                         {product.badge.text}
@@ -58,7 +58,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                     {product.title}
                 </h3>
                 <div className="flex items-center gap-2">
-                    <span className="text-lg font-bold text-cyan-600 dark:text-cyan-400">
+                    <span className="text-lg font-bold text-primary dark:text-primary">
                         ${product.price.toFixed(2)}
                     </span>
                     {product.originalPrice && (

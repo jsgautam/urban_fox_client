@@ -97,7 +97,7 @@ export default function HotDeals() {
                             <h3 className="mb-1 text-xs font-bold uppercase tracking-widest text-zinc-300 md:text-xs">
                                 {deal.title}
                             </h3>
-                            <p className="text-lg font-black tracking-tight text-cyan-400 md:text-xl">
+                            <p className="text-lg font-black tracking-tight text-primary md:text-xl">
                                 {deal.discount}
                             </p>
                         </div>

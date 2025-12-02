@@ -57,26 +57,26 @@ export function Footer() {
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
                     <div className="space-y-6">
                         <div className="flex items-center space-x-2">
-                            <div className="h-8 w-8 rounded-lg bg-cyan-400" />
+                            <div className="h-8 w-8 rounded-lg bg-primary" />
                             <span className="text-xl font-bold">Urban Fox</span>
                         </div>
                         <p className="text-sm text-muted-foreground">
                             Ride the Style Wave.
                         </p>
                         <div className="flex space-x-4">
-                            <Link href="#" className="text-muted-foreground transition-colors hover:text-cyan-400">
+                            <Link href="#" className="text-muted-foreground transition-colors hover:text-primary">
                                 <Instagram className="h-5 w-5" />
                                 <span className="sr-only">Instagram</span>
                             </Link>
-                            <Link href="#" className="text-muted-foreground transition-colors hover:text-cyan-400">
+                            <Link href="#" className="text-muted-foreground transition-colors hover:text-primary">
                                 <Facebook className="h-5 w-5" />
                                 <span className="sr-only">Facebook</span>
                             </Link>
-                            <Link href="#" className="text-muted-foreground transition-colors hover:text-cyan-400">
+                            <Link href="#" className="text-muted-foreground transition-colors hover:text-primary">
                                 <Twitter className="h-5 w-5" />
                                 <span className="sr-only">Twitter</span>
                             </Link>
-                            <Link href="#" className="text-muted-foreground transition-colors hover:text-cyan-400">
+                            <Link href="#" className="text-muted-foreground transition-colors hover:text-primary">
                                 <User className="h-5 w-5" />
                                 <span className="sr-only">Account</span>
                             </Link>
@@ -85,11 +85,11 @@ export function Footer() {
                             <h4 className="text-sm font-semibold">Stay in the loop</h4>
                             <form className="flex w-full space-x-2">
                                 <Input
-                                    className="flex-1 bg-muted/50 focus-visible:ring-cyan-400"
+                                    className="flex-1 bg-muted/50 focus-visible:ring-primary"
                                     placeholder="Your email address"
                                     type="email"
                                 />
-                                <Button className="group bg-cyan-400 text-black hover:bg-cyan-500" type="submit">
+                                <Button className="group bg-primary text-black hover:bg-primary" type="submit">
                                     Subscribe
                                     <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                                 </Button>
@@ -105,7 +105,7 @@ export function Footer() {
                                     <li key={link.label}>
                                         <Link
                                             href={link.href}
-                                            className="transition-colors hover:text-cyan-400"
+                                            className="transition-colors hover:text-primary"
                                         >
                                             {link.label}
                                         </Link>
@@ -125,10 +125,10 @@ export function Footer() {
                             <CreditCard className="h-6 w-6" />
                             <Wallet className="h-6 w-6" />
                             <div className="h-6 w-8 rounded bg-muted/50" />
-                            <div className="h-6 w-8 rounded bg-cyan-900" />
+                            <div className="h-6 w-8 rounded bg-primary/20" />
                         </div>
                         <Select defaultValue="en-usd">
-                            <SelectTrigger className="w-[140px] h-8 text-xs focus:ring-cyan-400">
+                            <SelectTrigger className="w-[140px] h-8 text-xs focus:ring-primary">
                                 <SelectValue placeholder="Language" />
                             </SelectTrigger>
                             <SelectContent>
