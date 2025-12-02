@@ -135,7 +135,7 @@ export default function ProductFilters() {
             </div>
 
             {/* Apply Button */}
-            <Button className="w-full rounded-full bg-cyan-400 py-6 text-base font-bold text-black hover:bg-cyan-500">
+            <Button className="w-full rounded-full bg-primary py-6 text-base font-bold text-black hover:bg-primary/90">
                 Apply Filters
             </Button>
         </div>

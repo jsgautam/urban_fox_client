@@ -32,10 +32,10 @@ export default function CategoryHero({
                 <h1 className="mb-4 text-4xl font-bold text-white md:text-6xl">
                     Stay Warm in Style.
                 </h1>
-                <p className="mb-8 max-w-lg text-base text-zinc-200 md:text-lg">
+                <p className="mb-8 max-w-lg text-base text-primary md:text-lg">
                     {description}
                 </p>
-                <div className="h-1 w-24 rounded-full bg-cyan-400" />
+                <div className="h-1 w-24 rounded-full bg-primary" />
             </div>
         </div>
     );

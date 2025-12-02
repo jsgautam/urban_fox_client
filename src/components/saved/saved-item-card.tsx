@@ -75,7 +75,7 @@ export default function SavedItemCard({
                         className={cn(
                             "flex h-10 w-10 items-center justify-center rounded-full transition-colors",
                             item.inStock
-                                ? "bg-cyan-400 text-black hover:bg-cyan-500"
+                                ? "bg-primary text-black hover:bg-primary/90"
                                 : "bg-zinc-300 text-zinc-500 cursor-not-allowed dark:bg-zinc-700 dark:text-zinc-500"
                         )}
                         aria-label="Add to cart"

@@ -33,7 +33,7 @@ function Logo() {
     return (
         <div className="flex items-center gap-2">
             <Link href="/" className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-lg bg-cyan-400" />
+                <div className="h-8 w-8 rounded-lg bg-primary" />
                 <span className="text-xl font-bold tracking-tight">Urban Fox</span>
             </Link>
         </div>
@@ -74,7 +74,7 @@ function ActionButtons() {
             <Link href="/cart">
                 <Button variant="ghost" size="icon" className="relative">
                     <ShoppingBag className="h-5 w-5" />
-                    <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-cyan-400 text-[10px] font-bold text-black">
+                    <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-black">
                         3
                     </span>
                     <span className="sr-only">Cart</span>
@@ -103,7 +103,7 @@ function MobileNav() {
             <SheetContent side="left" className="w-[300px] sm:w-[400px]">
                 <div className="flex flex-col h-full">
                     <div className="flex items-center gap-2 mb-8 px-2">
-                        <div className="h-8 w-8 rounded-lg bg-cyan-400" />
+                        <div className="h-8 w-8 rounded-lg bg-primary" />
                         <span className="text-xl font-bold tracking-tight">Urban Fox</span>
                     </div>
 
@@ -130,32 +130,32 @@ function MobileBottomNav() {
             <div className="mx-auto max-w-md rounded-2xl border bg-background/80 shadow-lg backdrop-blur-md">
                 <div className="flex items-center justify-around h-16 px-2">
                     <Link href="/" className="flex flex-col items-center gap-1 px-3 py-2 text-muted-foreground hover:text-foreground transition-colors group">
-                        <div className="h-6 w-6 rounded-lg bg-cyan-400/20 group-hover:bg-cyan-400 transition-colors flex items-center justify-center">
-                            <div className="h-3 w-3 rounded bg-cyan-400 group-hover:bg-background" />
+                        <div className="h-6 w-6 rounded-lg bg-primary/20 group-hover:bg-primary transition-colors flex items-center justify-center">
+                            <div className="h-3 w-3 rounded bg-primary group-hover:bg-background" />
                         </div>
                         <span className="text-xs font-medium">Home</span>
                     </Link>
 
                     <Link href="/search" className="flex flex-col items-center gap-1 px-3 py-2 text-muted-foreground hover:text-foreground transition-colors group">
-                        <Search className="h-5 w-5 group-hover:text-cyan-400 transition-colors" />
+                        <Search className="h-5 w-5 group-hover:text-primary transition-colors" />
                         <span className="text-xs font-medium">Search</span>
                     </Link>
 
                     <Link href="/profile/saved" className="flex flex-col items-center gap-1 px-3 py-2 text-muted-foreground hover:text-foreground transition-colors group">
-                        <Heart className="h-5 w-5 group-hover:text-cyan-400 transition-colors" />
+                        <Heart className="h-5 w-5 group-hover:text-primary transition-colors" />
                         <span className="text-xs font-medium">Wishlist</span>
                     </Link>
 
                     <Link href="/cart" className="flex flex-col items-center gap-1 px-3 py-2 text-muted-foreground hover:text-foreground transition-colors group relative">
-                        <ShoppingBag className="h-5 w-5 group-hover:text-cyan-400 transition-colors" />
-                        <span className="absolute -top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-cyan-400 text-[10px] font-bold text-black">
+                        <ShoppingBag className="h-5 w-5 group-hover:text-primary transition-colors" />
+                        <span className="absolute -top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-black">
                             3
                         </span>
                         <span className="text-xs font-medium">Cart</span>
                     </Link>
 
                     <Link href="/login" className="flex flex-col items-center gap-1 px-3 py-2 text-muted-foreground hover:text-foreground transition-colors group">
-                        <Avatar className="h-5 w-5 border border-transparent group-hover:border-cyan-400 transition-colors">
+                        <Avatar className="h-5 w-5 border border-transparent group-hover:border-primary transition-colors">
                             <AvatarImage src="/avatars/01.png" />
                             <AvatarFallback className="text-[10px]">VS</AvatarFallback>
                         </Avatar>

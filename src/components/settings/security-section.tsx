@@ -127,7 +127,7 @@ export default function SecuritySection() {
                 <div className="flex justify-end">
                     <Button
                         onClick={handleChangePassword}
-                        className="rounded-full bg-cyan-400 text-black hover:bg-cyan-500"
+                        className="rounded-full bg-primary text-black hover:bg-primary"
                     >
                         Change Password
                     </Button>

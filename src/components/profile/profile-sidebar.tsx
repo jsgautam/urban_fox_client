@@ -32,7 +32,7 @@ export default function ProfileSidebar() {
                 <div className="flex items-center gap-3">
                     <Avatar className="h-12 w-12">
                         <AvatarImage src="/placeholder-avatar.jpg" alt="User" />
-                        <AvatarFallback className="bg-cyan-100 text-cyan-700">
+                        <AvatarFallback className="bg-primary/10 text-primary">
                             <User className="h-6 w-6" />
                         </AvatarFallback>
                     </Avatar>
@@ -61,7 +61,7 @@ export default function ProfileSidebar() {
                                 className={cn(
                                     "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                                     isActive
-                                        ? "bg-cyan-400 text-black"
+                                        ? "bg-primary/10 text-black"
                                         : "text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
                                 )}
                             >
@@ -75,7 +75,7 @@ export default function ProfileSidebar() {
                 <div className="h-px bg-zinc-200 dark:bg-zinc-800" />
 
                 {/* Logout */}
-                <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/20">
+                <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-primary/10 dark:text-red-400 dark:hover:bg-red-950/20">
                     <LogOut className="h-5 w-5" />
                     Logout
                 </button>

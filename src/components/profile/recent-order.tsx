@@ -12,7 +12,7 @@ export default function RecentOrder() {
                 </h2>
                 <Link
                     href="/profile/orders"
-                    className="text-sm font-medium text-cyan-500 hover:text-cyan-600"
+                    className="text-sm font-medium text-primary hover:text-primary/80"
                 >
                     View All
                 </Link>

@@ -134,7 +134,7 @@ export default function FlashSale() {
                     <div>
                         <Link
                             href="/products?sale=flash"
-                            className="inline-block rounded-full bg-cyan-400 px-8 py-3 text-sm font-bold text-black transition-all duration-300 hover:bg-cyan-300 hover:shadow-lg"
+                            className="inline-block rounded-full bg-primary px-8 py-3 text-sm font-bold text-black transition-all duration-300 hover:bg-primary/10 hover:shadow-lg"
                         >
                             Grab The Sale
                         </Link>

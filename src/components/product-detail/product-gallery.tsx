@@ -44,7 +44,7 @@ export default function ProductGallery({ images }: ProductGalleryProps) {
                         className={cn(
                             "relative aspect-square overflow-hidden rounded-xl bg-zinc-100 transition-all dark:bg-zinc-800",
                             selectedImage === index
-                                ? "ring-2 ring-cyan-400 ring-offset-2 dark:ring-offset-zinc-950"
+                                ? "ring-2 ring-primary ring-offset-2 dark:ring-offset-zinc-950"
                                 : "opacity-70 hover:opacity-100"
                         )}
                     >

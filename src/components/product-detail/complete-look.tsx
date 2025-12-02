@@ -16,11 +16,11 @@ export default function CompleteLook() {
                     <h2 className="text-3xl font-bold text-white md:text-4xl">
                         Complete The Look
                     </h2>
-                    <p className="text-teal-100">
+                    <p className="text-primary">
                         Our Wave Hoodie pairs perfectly with the Dockside Beanie. Grab both and
                         get 15% off your combo.
                     </p>
-                    <Button className="rounded-full bg-cyan-400 px-8 py-6 text-base font-bold text-black hover:bg-cyan-500">
+                    <Button className="rounded-full bg-primary px-8 py-6 text-base font-bold text-black hover:bg-primary">
                         Shop The Combo
                     </Button>
                 </div>

@@ -99,7 +99,7 @@ export default function OrderSummary({
                 {/* Checkout Button */}
                 <Button
                     onClick={onCheckout}
-                    className="w-full rounded-full bg-cyan-400 py-6 text-base font-bold text-black hover:bg-cyan-500"
+                    className="w-full rounded-full bg-primary py-6 text-base font-bold text-black hover:bg-primary"
                 >
                     Proceed to Checkout
                 </Button>

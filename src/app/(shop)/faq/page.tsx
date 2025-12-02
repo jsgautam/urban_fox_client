@@ -99,7 +99,7 @@ export default function FAQPage() {
                             className={cn(
                                 "rounded-full px-6 py-2 text-sm font-medium transition-colors",
                                 activeCategory === category
-                                    ? "bg-cyan-400 text-black"
+                                    ? "bg-primary text-black"
                                     : "bg-white text-zinc-700 hover:bg-zinc-100 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
                             )}
                         >
@@ -151,7 +151,7 @@ export default function FAQPage() {
                 </div>
 
                 {/* Contact CTA */}
-                <div className="mx-auto mt-16 max-w-2xl rounded-3xl bg-gradient-to-r from-cyan-500 to-blue-600 p-12 text-center">
+                <div className="mx-auto mt-16 max-w-2xl rounded-3xl bg-gradient-to-r from-primary to-orange-600 p-12 text-center">
                     <h2 className="mb-4 text-2xl font-bold text-white md:text-3xl">
                         Still have questions?
                     </h2>
@@ -161,7 +161,7 @@ export default function FAQPage() {
                     <Button
                         asChild
                         size="lg"
-                        className="rounded-full bg-white text-cyan-600 hover:bg-zinc-100"
+                        className="rounded-full bg-white text-primary hover:bg-zinc-100"
                     >
                         <a href="mailto:support@urbanfox.com">Contact Us</a>
                     </Button>

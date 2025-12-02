@@ -119,7 +119,7 @@ export default function PersonalInfoSection({
                             </Button>
                             <Button
                                 onClick={handleSave}
-                                className="rounded-full bg-cyan-400 text-black hover:bg-cyan-500"
+                                className="rounded-full bg-primary text-black hover:bg-primary"
                             >
                                 Save Changes
                             </Button>

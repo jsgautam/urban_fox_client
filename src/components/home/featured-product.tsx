@@ -31,7 +31,7 @@ export default function FeaturedProduct({
                 <div className="flex flex-col justify-center p-8 md:p-12 lg:p-16">
                     {/* Badge */}
                     <div className="mb-6">
-                        <span className="inline-block rounded-full bg-cyan-400 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-black">
+                        <span className="inline-block rounded-full bg-primary px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-black">
                             {badge}
                         </span>
                     </div>
@@ -42,7 +42,7 @@ export default function FeaturedProduct({
                     </h2>
 
                     {/* Description */}
-                    <p className="mb-8 max-w-md text-base leading-relaxed text-zinc-600 dark:text-zinc-400 md:text-lg">
+                    <p className="mb-8 max-w-md text-base leading-relaxed text-zinc-600 dark:text-primary md:text-lg">
                         {description}
                     </p>
 
@@ -50,7 +50,7 @@ export default function FeaturedProduct({
                     <div>
                         <Link
                             href={buttonLink}
-                            className="inline-block rounded-full bg-zinc-900 px-8 py-4 text-sm font-semibold text-white transition-all duration-300 hover:bg-zinc-800 hover:shadow-lg dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
+                            className="inline-block rounded-full bg-zinc-900 px-8 py-4 text-sm font-semibold text-white transition-all duration-300 hover:bg-primary/90 hover:shadow-lg dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
                         >
                             {buttonText}
                         </Link>

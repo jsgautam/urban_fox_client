@@ -116,7 +116,7 @@ export default function HeroCarousel() {
                                 <div className="pt-4">
                                     <a
                                         href={slide.buttonLink}
-                                        className="inline-block rounded-full bg-cyan-400 px-8 py-3 text-sm font-semibold text-black transition-all duration-300 hover:bg-cyan-300 hover:shadow-lg hover:shadow-cyan-400/50"
+                                        className="inline-block rounded-full bg-primary px-8 py-3 text-sm font-semibold text-black transition-all duration-300 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/50"
                                     >
                                         {slide.buttonText}
                                     </a>
@@ -150,8 +150,8 @@ export default function HeroCarousel() {
                         key={index}
                         onClick={() => goToSlide(index)}
                         className={`h-2 rounded-full transition-all duration-300 ${index === currentSlide
-                                ? "w-8 bg-white"
-                                : "w-2 bg-white/50 hover:bg-white/75"
+                            ? "w-8 bg-white"
+                            : "w-2 bg-white/50 hover:bg-white/75"
                             }`}
                         aria-label={`Go to slide ${index + 1}`}
                     />

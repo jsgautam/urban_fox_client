@@ -72,7 +72,7 @@ export default function CompleteYourLook() {
                             <h3 className="font-bold text-zinc-900 line-clamp-1 dark:text-zinc-50">
                                 {product.name}
                             </h3>
-                            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                            <p className="text-sm text-zinc-500 dark:text-primary">
                                 {product.description}
                             </p>
                             <div className="mt-3 flex items-center justify-between">
@@ -81,7 +81,7 @@ export default function CompleteYourLook() {
                                 </span>
                                 <Button
                                     size="icon"
-                                    className="h-9 w-9 rounded-full bg-cyan-400 text-black hover:bg-cyan-500"
+                                    className="h-9 w-9 rounded-full bg-primary text-black hover:bg-primary"
                                 >
                                     <ShoppingCart className="h-4 w-4" />
                                 </Button>
