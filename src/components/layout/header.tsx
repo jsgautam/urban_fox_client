@@ -1,8 +1,11 @@
+"use client"
+
 import Link from "next/link"
 import { ShoppingBag, Menu, Search, Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useAuth } from "@/hooks/useAuth"
 
 const navLinks = [
     { href: "/products?category=t-shirts", label: "T-Shirts" },
@@ -57,6 +60,17 @@ function DesktopNav() {
 }
 
 function ActionButtons() {
+    const { user } = useAuth();
+
+    // Get user initials
+    const displayName = user?.displayName || user?.email?.split("@")[0] || "User";
+    const initials = displayName
+        .split(" ")
+        .map(n => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2);
+
     return (
         <>
             <Button variant="ghost" size="icon" className="hidden md:flex">
@@ -83,8 +97,10 @@ function ActionButtons() {
 
             <Link href="/profile" className="hidden md:block">
                 <Avatar className="h-8 w-8 bg-orange-100">
-                    <AvatarImage src="/avatars/01.png" alt="@urbanfox" />
-                    <AvatarFallback className="bg-orange-200 text-orange-900">UF</AvatarFallback>
+                    <AvatarImage src={user?.photoURL || "/avatars/01.png"} alt={displayName} />
+                    <AvatarFallback className="bg-orange-200 text-orange-900">
+                        {initials}
+                    </AvatarFallback>
                 </Avatar>
             </Link>
         </>
@@ -125,6 +141,17 @@ function MobileNav() {
 }
 
 function MobileBottomNav() {
+    const { user } = useAuth();
+
+    // Get user initials
+    const displayName = user?.displayName || user?.email?.split("@")[0] || "User";
+    const initials = displayName
+        .split(" ")
+        .map(n => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2);
+
     return (
         <nav className="md:hidden fixed bottom-4 left-0 right-0 z-50 px-2">
             <div className="mx-auto max-w-md rounded-2xl border bg-background/80 shadow-lg backdrop-blur-md">
@@ -154,10 +181,10 @@ function MobileBottomNav() {
                         <span className="text-xs font-medium">Cart</span>
                     </Link>
 
-                    <Link href="/login" className="flex flex-col items-center gap-1 px-3 py-2 text-muted-foreground hover:text-foreground transition-colors group">
+                    <Link href="/profile" className="flex flex-col items-center gap-1 px-3 py-2 text-muted-foreground hover:text-foreground transition-colors group">
                         <Avatar className="h-5 w-5 border border-transparent group-hover:border-primary transition-colors">
-                            <AvatarImage src="/avatars/01.png" />
-                            <AvatarFallback className="text-[10px]">VS</AvatarFallback>
+                            <AvatarImage src={user?.photoURL || "/avatars/01.png"} />
+                            <AvatarFallback className="text-[10px]">{initials}</AvatarFallback>
                         </Avatar>
                         <span className="text-xs font-medium">Account</span>
                     </Link>

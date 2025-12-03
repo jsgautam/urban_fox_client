@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
     LayoutDashboard,
@@ -13,6 +13,8 @@ import {
     User,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { logOut } from "@/lib/authClient";
+import { useAuth } from "@/hooks/useAuth";
 
 const navItems = [
     { icon: LayoutDashboard, label: "Dashboard", href: "/profile" },
@@ -24,6 +26,27 @@ const navItems = [
 
 export default function ProfileSidebar() {
     const pathname = usePathname();
+    const router = useRouter();
+    const { user } = useAuth();
+
+    const handleLogout = async () => {
+        try {
+            await logOut();
+            router.push("/login");
+        } catch (error) {
+            console.error("Error logging out:", error);
+        }
+    };
+
+    // Get user display name or fallback
+    const displayName = user?.displayName || user?.email?.split("@")[0] || "User";
+    // Get user initials for avatar fallback
+    const initials = displayName
+        .split(" ")
+        .map(n => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2);
 
     return (
         <aside className="w-full lg:w-64 lg:shrink-0">
@@ -31,17 +54,17 @@ export default function ProfileSidebar() {
                 {/* User Profile */}
                 <div className="flex items-center gap-3">
                     <Avatar className="h-12 w-12">
-                        <AvatarImage src="/placeholder-avatar.jpg" alt="User" />
+                        <AvatarImage src={user?.photoURL || "/placeholder-avatar.jpg"} alt={displayName} />
                         <AvatarFallback className="bg-primary/10 text-primary">
-                            <User className="h-6 w-6" />
+                            {initials || <User className="h-6 w-6" />}
                         </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
                         <h3 className="font-bold text-zinc-900 dark:text-zinc-50 truncate">
-                            Alex Johnson
+                            {displayName}
                         </h3>
                         <p className="text-sm text-zinc-500 dark:text-zinc-400 truncate">
-                            alex.j@email.com
+                            {user?.email || user?.phoneNumber || "No contact info"}
                         </p>
                     </div>
                 </div>
@@ -75,7 +98,10 @@ export default function ProfileSidebar() {
                 <div className="h-px bg-zinc-200 dark:bg-zinc-800" />
 
                 {/* Logout */}
-                <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-primary/10 dark:text-red-400 dark:hover:bg-red-950/20">
+                <button
+                    onClick={handleLogout}
+                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-primary/10 dark:text-red-400 dark:hover:bg-red-950/20"
+                >
                     <LogOut className="h-5 w-5" />
                     Logout
                 </button>

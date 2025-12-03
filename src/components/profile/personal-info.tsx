@@ -3,8 +3,14 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function PersonalInfo() {
+    const { user } = useAuth();
+
+    // Get display name or fallback
+    const displayName = user?.displayName || user?.email?.split("@")[0] || "User";
+
     return (
         <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 md:p-8">
             <div className="mb-6 flex items-center justify-between">
@@ -27,7 +33,7 @@ export default function PersonalInfo() {
                         </Label>
                         <Input
                             id="fullName"
-                            defaultValue="Alex Johnson"
+                            value={displayName}
                             disabled
                             className="bg-zinc-50 dark:bg-zinc-800"
                         />
@@ -40,7 +46,7 @@ export default function PersonalInfo() {
                         <Input
                             id="email"
                             type="email"
-                            defaultValue="alex.j@email.com"
+                            value={user?.email || "Not provided"}
                             disabled
                             className="bg-zinc-50 dark:bg-zinc-800"
                         />
@@ -53,7 +59,7 @@ export default function PersonalInfo() {
                     </Label>
                     <Input
                         id="phone"
-                        defaultValue="(***) ***-1234"
+                        value={user?.phoneNumber || "Not provided"}
                         disabled
                         className="bg-zinc-50 dark:bg-zinc-800"
                     />
