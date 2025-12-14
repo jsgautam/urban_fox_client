@@ -1,145 +1,143 @@
-import Link from "next/link"
-import { Facebook, Instagram, Twitter, User, CreditCard, Wallet, ArrowRight } from "lucide-react"
-
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
+import Link from "next/link";
+import { Facebook, Instagram, Twitter, Youtube, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 const footerLinks = [
     {
-        title: "Shop & Discover",
+        title: "Shop",
         links: [
-            { label: "New Arrivals", href: "#" },
-            { label: "Trending Collections", href: "#" },
-            { label: "T-Shirts", href: "#" },
-            { label: "Hoodies", href: "#" },
-            { label: "Sweatshirts", href: "#" },
-            { label: "Oversized Collection", href: "#" },
-            { label: "Athleisure", href: "#" },
-            { label: "Flash Sale", href: "#" },
-            { label: "Exclusive Offers", href: "#" },
+            { label: "New Arrivals", href: "/products?sort=new" },
+            { label: "Best Sellers", href: "/products?sort=best-selling" },
+            { label: "T-Shirts", href: "/products?category=t-shirts" },
+            { label: "Hoodies", href: "/products?category=hoodies" },
+            { label: "Accessories", href: "/products?category=accessories" },
+            { label: "Sale", href: "/products?category=sale" },
         ],
     },
     {
-        title: "Help & Support",
+        title: "Support",
         links: [
-            { label: "FAQ", href: "/faq" },
-            { label: "Contact Us", href: "#" },
-            { label: "Order History", href: "#" },
-            { label: "Returns & Exchanges", href: "#" },
-            { label: "Size Guide", href: "#" },
-            { label: "Payment Methods", href: "#" },
+            { label: "Help Center", href: "/help" },
+            { label: "Order Status", href: "/orders" },
+            { label: "Returns", href: "/returns" },
+            { label: "Size Guide", href: "/size-guide" },
+            { label: "Contact Us", href: "/contact" },
+            { label: "Shipping", href: "/shipping" },
         ],
     },
     {
-        title: "Company & Legal",
+        title: "Company",
         links: [
-            { label: "About Us", href: "/about-us" },
-            { label: "Our Story", href: "/about-us" },
-            { label: "Careers", href: "#" },
-            { label: "Privacy Policy", href: "#" },
-            { label: "Terms of Service", href: "#" },
-            { label: "Rewards Program", href: "/rewards" },
+            { label: "About Urban Fox", href: "/about" },
+            { label: "Sustainability", href: "/sustainability" },
+            { label: "Careers", href: "/careers" },
+            { label: "Terms", href: "/terms" },
+            { label: "Privacy", href: "/privacy" },
+            { label: "Press", href: "/press" },
         ],
     },
-]
+];
 
 export function Footer() {
     return (
-        <footer className="bg-background pt-16 pb-8 border-t rounded-t-3xl mx-2 mt-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
-            <div className="container mx-auto px-4 md:px-6">
-                <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-                    <div className="space-y-6">
-                        <div className="flex items-center space-x-2">
-                            <div className="h-8 w-8 rounded-lg bg-primary" />
-                            <span className="text-xl font-bold">Urban Fox</span>
+        <footer className="w-full bg-black relative overflow-hidden pt-16 pb-8 border-t border-white/5">
+            {/* Ambient Background Glows */}
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none opacity-50" />
+
+            {/* Massive Watermark */}
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full text-center pointer-events-none select-none opacity-[0.02]">
+                <h1 className="text-[10rem] font-black tracking-tighter text-white leading-none whitespace-nowrap">
+                    URBAN FOX
+                </h1>
+            </div>
+
+            <div className="container mx-auto px-4 md:px-6 relative z-10">
+                <div className="flex flex-col lg:flex-row gap-12 lg:gap-24 mb-16">
+
+                    {/* Left Column: Brand, Desc, Newsletter, Socials */}
+                    <div className="w-full lg:w-1/3 flex flex-col gap-8">
+                        <div>
+                            <Link href="/" className="inline-block mb-3">
+                                <span className="text-2xl font-black tracking-tighter text-white">
+                                    Urban Fox<span className="text-primary">.</span>
+                                </span>
+                            </Link>
+                            <p className="text-zinc-400 text-sm leading-relaxed font-medium max-w-sm">
+                                Engineered for the modern urban aesthete. Sustainable, premium, and designed to stand out.
+                            </p>
                         </div>
-                        <p className="text-sm text-muted-foreground">
-                            Ride the Style Wave.
-                        </p>
-                        <div className="flex space-x-4">
-                            <Link href="#" className="text-muted-foreground transition-colors hover:text-primary">
-                                <Instagram className="h-5 w-5" />
-                                <span className="sr-only">Instagram</span>
-                            </Link>
-                            <Link href="#" className="text-muted-foreground transition-colors hover:text-primary">
-                                <Facebook className="h-5 w-5" />
-                                <span className="sr-only">Facebook</span>
-                            </Link>
-                            <Link href="#" className="text-muted-foreground transition-colors hover:text-primary">
-                                <Twitter className="h-5 w-5" />
-                                <span className="sr-only">Twitter</span>
-                            </Link>
-                            <Link href="#" className="text-muted-foreground transition-colors hover:text-primary">
-                                <User className="h-5 w-5" />
-                                <span className="sr-only">Account</span>
-                            </Link>
-                        </div>
-                        <div className="space-y-2">
-                            <h4 className="text-sm font-semibold">Stay in the loop</h4>
-                            <form className="flex w-full space-x-2">
-                                <Input
-                                    className="flex-1 bg-muted/50 focus-visible:ring-primary"
-                                    placeholder="Your email address"
-                                    type="email"
-                                />
-                                <Button className="group bg-primary text-black hover:bg-primary" type="submit">
-                                    Subscribe
-                                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+
+                        {/* Integrated Newsletter */}
+                        <div className="w-full max-w-sm">
+                            <form className="flex w-full items-center gap-2">
+                                <div className="relative flex-1">
+                                    <Input
+                                        type="email"
+                                        placeholder="Subscribe to newsletter"
+                                        className="h-10 bg-white/5 border-white/10 text-white placeholder:text-zinc-500 rounded-lg focus:border-primary/50 focus:ring-primary/20 transition-all text-sm"
+                                    />
+                                </div>
+                                <Button size="icon" className="h-10 w-10 rounded-lg bg-primary hover:bg-primary/90 text-white shrink-0">
+                                    <ArrowRight className="w-4 h-4" />
                                 </Button>
                             </form>
                         </div>
+
+                        <div className="flex gap-3">
+                            <SocialLink href="#" icon={<Instagram className="w-4 h-4" />} label="Instagram" />
+                            <SocialLink href="#" icon={<Twitter className="w-4 h-4" />} label="Twitter" />
+                            <SocialLink href="#" icon={<Facebook className="w-4 h-4" />} label="Facebook" />
+                            <SocialLink href="#" icon={<Youtube className="w-4 h-4" />} label="YouTube" />
+                        </div>
                     </div>
 
-                    {footerLinks.map((section) => (
-                        <div key={section.title} className="space-y-4">
-                            <h4 className="text-sm font-semibold">{section.title}</h4>
-                            <ul className="space-y-2 text-sm text-muted-foreground">
-                                {section.links.map((link) => (
-                                    <li key={link.label}>
-                                        <Link
-                                            href={link.href}
-                                            className="transition-colors hover:text-primary"
-                                        >
-                                            {link.label}
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    ))}
+                    {/* Right Column: Links Grid */}
+                    <div className="w-full lg:w-2/3 grid grid-cols-2 md:grid-cols-3 gap-8 text-right lg:text-left">
+                        {footerLinks.map((section) => (
+                            <div key={section.title} className="flex flex-col gap-6">
+                                <h4 className="font-bold text-white text-base tracking-wide">{section.title}</h4>
+                                <ul className="flex flex-col gap-3">
+                                    {section.links.map((link) => (
+                                        <li key={link.label}>
+                                            <Link
+                                                href={link.href}
+                                                className="text-zinc-400 hover:text-white transition-colors text-sm font-medium hover:translate-x-1 inline-block duration-200"
+                                            >
+                                                {link.label}
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
                 </div>
-                <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t pt-8 md:flex-row">
-                    <p className="text-xs text-muted-foreground">
-                        © 2024 Urban Fox. All Rights Reserved.
-                    </p>
-                    <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                            {/* Placeholder icons for payment methods */}
-                            <CreditCard className="h-6 w-6" />
-                            <Wallet className="h-6 w-6" />
-                            <div className="h-6 w-8 rounded bg-muted/50" />
-                            <div className="h-6 w-8 rounded bg-primary/20" />
-                        </div>
-                        <Select defaultValue="en-usd">
-                            <SelectTrigger className="w-[140px] h-8 text-xs focus:ring-primary">
-                                <SelectValue placeholder="Language" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="en-usd">English / USD</SelectItem>
-                                <SelectItem value="fr-eur">French / EUR</SelectItem>
-                                <SelectItem value="de-eur">German / EUR</SelectItem>
-                            </SelectContent>
-                        </Select>
+
+                {/* Bottom Bar */}
+                <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 border-t border-white/5 text-xs text-zinc-500 font-medium tracking-wide">
+                    <p>© {new Date().getFullYear()} Urban Fox. All rights reserved.</p>
+                    <div className="flex gap-8">
+                        <Link href="/privacy" className="hover:text-zinc-300 transition-colors">Privacy</Link>
+                        <Link href="/terms" className="hover:text-zinc-300 transition-colors">Terms</Link>
+                        <Link href="/cookies" className="hover:text-zinc-300 transition-colors">Cookies</Link>
                     </div>
                 </div>
             </div>
         </footer>
-    )
+    );
+}
+
+function SocialLink({ href, icon, label }: { href: string; icon: React.ReactNode; label: string }) {
+    return (
+        <Link
+            href={href}
+            className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-primary hover:border-primary hover:text-white transition-all duration-300 group"
+            aria-label={label}
+        >
+            <div className="group-hover:scale-110 transition-transform duration-300">
+                {icon}
+            </div>
+        </Link>
+    );
 }

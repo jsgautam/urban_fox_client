@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { Maximize2, Box } from "lucide-react";
+import { Maximize2 } from "lucide-react";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 interface ProductGalleryProps {
     images: string[];
@@ -11,50 +12,57 @@ interface ProductGalleryProps {
 
 export default function ProductGallery({ images }: ProductGalleryProps) {
     const [selectedImage, setSelectedImage] = useState(0);
+    const nextImage = () => setSelectedImage((prev) => (prev + 1) % images.length);
+    const prevImage = () => setSelectedImage((prev) => (prev - 1 + images.length) % images.length);
 
     return (
-        <div className="flex flex-col gap-4">
-            {/* Main Image */}
-            <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-zinc-100 dark:bg-zinc-800">
+        <div className="relative w-full h-full bg-zinc-950">
+            {/* Main Full-Screen Image */}
+            <div className="absolute inset-0 w-full h-full">
                 <Image
                     src={images[selectedImage]}
                     alt="Product Image"
                     fill
-                    className="object-cover transition-all duration-500"
+                    className="object-cover object-top"
                     priority
                 />
-
-                {/* Floating Actions */}
-                <div className="absolute right-4 top-4 flex flex-col gap-2">
-                    <button className="flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-zinc-900 shadow-sm backdrop-blur-sm transition-colors hover:bg-white dark:bg-zinc-900/80 dark:text-zinc-50 dark:hover:bg-zinc-900">
-                        <Maximize2 className="h-5 w-5" />
-                    </button>
-                    <button className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-900/80 text-white shadow-sm backdrop-blur-sm transition-colors hover:bg-zinc-900 dark:bg-zinc-50/80 dark:text-zinc-900 dark:hover:bg-zinc-50">
-                        <Box className="h-5 w-5" />
-                    </button>
-                </div>
             </div>
 
-            {/* Thumbnails */}
-            <div className="grid grid-cols-4 gap-4">
-                {images.map((image, index) => (
-                    <button
+            {/* Cinematic Gradient Overlay (Top) */}
+            <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" />
+
+            {/* Controls Layer */}
+            <div className="absolute inset-0 flex items-center justify-between p-4 pointer-events-none">
+                <button
+                    onClick={prevImage}
+                    className="pointer-events-auto w-12 h-full hover:bg-black/10 transition-colors flex items-center justify-start group"
+                >
+                    <div className="p-3 bg-black/20 backdrop-blur-md rounded-full text-white/50 group-hover:text-white transition-colors opacity-0 group-hover:opacity-100">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+                    </div>
+                </button>
+                <button
+                    onClick={nextImage}
+                    className="pointer-events-auto w-12 h-full hover:bg-black/10 transition-colors flex items-center justify-end group"
+                >
+                    <div className="p-3 bg-black/20 backdrop-blur-md rounded-full text-white/50 group-hover:text-white transition-colors opacity-0 group-hover:opacity-100">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+                    </div>
+                </button>
+            </div>
+
+            {/* Pagination Indicators - Floating Top Right */}
+            <div className="absolute top-8 right-8 z-30 flex gap-1.5 pointer-events-none">
+                {images.map((_, index) => (
+                    <div
                         key={index}
-                        onClick={() => setSelectedImage(index)}
                         className={cn(
-                            "relative aspect-square overflow-hidden rounded-xl bg-zinc-100 transition-all dark:bg-zinc-800",
+                            "h-1 rounded-full transition-all duration-300 backdrop-blur-sm",
                             selectedImage === index
-                                ? "ring-2 ring-primary ring-offset-2 dark:ring-offset-zinc-950"
-                                : "opacity-70 hover:opacity-100"
+                                ? "w-8 bg-white"
+                                : "w-2 bg-white/30"
                         )}
-                    >
-                        <Image
-                            src={image}
-                            alt={`Thumbnail ${index + 1}`}
-                            fill
-                            className="object-cover"
-                        />
-                    </button>
+                    />
                 ))}
             </div>
         </div>

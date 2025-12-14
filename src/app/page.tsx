@@ -9,46 +9,32 @@ import HotDeals from "@/components/home/hot-deals";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex flex-col gap-10 md:gap-20 pb-32">
       {/* Hero Carousel Section */}
-      <section className="container mx-auto px-4 py-8 md:px-6 lg:px-8">
+      <section className="w-full relative -mt-[140px] z-0">
         <HeroCarousel />
       </section>
 
       {/* Shop By Category Section */}
-      <section className="container mx-auto px-4 py-12 md:px-6 lg:px-8">
-        <ShopByCategory />
-      </section>
+      <ShopByCategory />
 
       {/* Hot Deals Section */}
-      <section className="container mx-auto px-4 py-12 md:px-6 lg:px-8">
-        <HotDeals />
-      </section>
+      <HotDeals />
 
       {/* Flash Sale Section */}
-      <section className="container mx-auto px-4 py-12 md:px-6 lg:px-8">
-        <FlashSale />
-      </section>
+      <FlashSale />
 
       {/* Shop the Look Section */}
-      <section className="container mx-auto px-4 py-12 md:px-6 lg:px-8">
-        <ShopTheLook />
-      </section>
+      <ShopTheLook />
 
       {/* UrbanFox Fam Gallery Section */}
-      <section className="container mx-auto px-4 py-12 md:px-6 lg:px-8">
-        <UrbanFoxFam />
-      </section>
+      <UrbanFoxFam />
 
       {/* Featured Product Section */}
-      <section className="container mx-auto px-4 py-12 md:px-6 lg:px-8">
-        <FeaturedProduct />
-      </section>
+      <FeaturedProduct />
 
       {/* Trending Collections Section */}
-      <section className="container mx-auto px-4 py-12 md:px-6 lg:px-8">
-        <TrendingCollections />
-      </section>
+      <TrendingCollections />
     </div>
   );
 }

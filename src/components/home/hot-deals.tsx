@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import { Flame } from "lucide-react";
 import { ApiClient } from "@/lib/api-client";
 import { ApiProduct } from "@/types/product";
 
@@ -23,11 +25,7 @@ export default function HotDeals() {
         const fetchDeals = async () => {
             try {
                 setError(null);
-
-                // Fetch products on sale
                 const response = await ApiClient.getProducts({ onSale: true, limit: 50 });
-
-                // Group products by category
                 const categoryMap = new Map<string, ApiProduct[]>();
                 response.products.forEach((product: ApiProduct) => {
                     const category = product.category_name || "Other";
@@ -37,15 +35,12 @@ export default function HotDeals() {
                     categoryMap.get(category)!.push(product);
                 });
 
-                // Create deal categories from grouped products
                 const dealCategories: DealCategory[] = Array.from(categoryMap.entries())
-                    .slice(0, 6) // Limit to 6 categories
+                    .slice(0, 6)
                     .map(([categoryName, products], index) => {
-                        // Calculate average discount
                         const avgDiscount = products.reduce((sum, p) =>
                             sum + (p.discount_percentage || 0), 0) / products.length;
 
-                        // Get primary image (sort_order 1) or first image
                         let imageUrl = "/placeholder-product.jpg";
                         if (products[0].images && products[0].images.length > 0) {
                             const primaryImage = products[0].images.find(img => img.sort_order === 1);
@@ -58,10 +53,10 @@ export default function HotDeals() {
 
                         return {
                             id: `${index + 1}`,
-                            title: categoryName.toUpperCase(),
+                            title: categoryName,
                             discount: avgDiscount > 0
-                                ? `UP TO ${Math.round(avgDiscount)}% OFF`
-                                : "ON SALE",
+                                ? `${Math.round(avgDiscount)}% OFF`
+                                : "SALE",
                             image: imageUrl,
                             imageAlt: `${categoryName} Deal`,
                             link: `/products?category=${categoryName.toLowerCase().replace(/\s+/g, '-')}&sale=true`,
@@ -78,62 +73,69 @@ export default function HotDeals() {
         fetchDeals();
     }, []);
 
+    if (error || (deals.length === 0 && !error)) return null;
+
     return (
-        <section className="w-full">
-            {/* Header */}
-            <div className="mb-8 text-center">
-                <h2 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 md:text-3xl lg:text-4xl">
-                    SHOP OUR HOT DEALS
-                </h2>
-            </div>
-
-            {/* Error State */}
-            {error && (
-                <div className="rounded-2xl bg-red-50 dark:bg-red-900/20 p-6 text-center">
-                    <p className="text-red-600 dark:text-red-400">{error}</p>
+        <section className="w-full py-[10px] bg-zinc-50 dark:bg-zinc-950/50">
+            <div className="container mx-auto px-4">
+                <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                        <div className="h-8 w-8 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                            <Flame className="w-4 h-4 text-red-600 fill-current animate-pulse" />
+                        </div>
+                        <h2 className="text-2xl md:text-3xl font-black italic tracking-tighter text-zinc-900 dark:text-white uppercase leading-none">
+                            Steal <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-orange-500">Deals</span>
+                        </h2>
+                    </div>
+                    <Link href="/products?sale=true" className="group flex items-center text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors">
+                        View All
+                        <div className="ml-2 w-5 h-5 rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center group-hover:bg-red-600 group-hover:text-white transition-colors">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="-mr-0.5">
+                                <path d="m9 18 6-6-6-6" />
+                            </svg>
+                        </div>
+                    </Link>
                 </div>
-            )}
 
-            {/* Empty State */}
-            {!error && deals.length === 0 && (
-                <div className="rounded-2xl bg-zinc-100 dark:bg-zinc-800 p-6 text-center">
-                    <p className="text-zinc-600 dark:text-zinc-400">No deals available</p>
-                </div>
-            )}
-
-            {/* Deals Grid */}
-            {!error && deals.length > 0 && (
-                <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory md:grid md:grid-cols-3 lg:grid-cols-6 md:gap-6 md:pb-0 scrollbar-hide">
-                    {deals.map((deal) => (
-                        <Link
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                    {deals.map((deal, i) => (
+                        <motion.div
                             key={deal.id}
-                            href={deal.link}
-                            className="group relative aspect-[3/4] w-[60%] shrink-0 snap-center overflow-hidden rounded-2xl bg-zinc-900 shadow-md transition-all duration-300 hover:shadow-xl sm:w-[40%] md:w-auto"
+                            className="relative group overflow-hidden rounded-[1.5rem] h-[280px] bg-zinc-100 dark:bg-zinc-900 shadow-sm hover:shadow-xl transition-all duration-300"
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: i * 0.05 }}
+                            viewport={{ once: true }}
                         >
-                            {/* Image */}
-                            <Image
-                                src={deal.image}
-                                alt={deal.imageAlt}
-                                fill
-                                className="object-cover transition-transform duration-500 group-hover:scale-110 opacity-90 group-hover:opacity-100"
-                            />
+                            <Link href={deal.link} className="block h-full w-full">
+                                <Image
+                                    src={deal.image}
+                                    alt={deal.imageAlt}
+                                    fill
+                                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                    sizes="(max-width: 768px) 50vw, 16vw"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/0 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
 
-                            {/* Gradient Overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+                                <div className="absolute top-3 right-3 z-10">
+                                    <div className="bg-white/95 backdrop-blur-sm text-red-600 font-black text-xs px-2.5 py-1 rounded-md shadow-sm transform group-hover:scale-110 transition-transform">
+                                        {deal.discount}
+                                    </div>
+                                </div>
 
-                            {/* Content */}
-                            <div className="absolute bottom-0 left-0 right-0 p-4 text-center">
-                                <h3 className="mb-1 text-xs font-bold uppercase tracking-widest text-zinc-300 md:text-xs">
-                                    {deal.title}
-                                </h3>
-                                <p className="text-lg font-black tracking-tight text-primary md:text-xl">
-                                    {deal.discount}
-                                </p>
-                            </div>
-                        </Link>
+                                <div className="absolute bottom-4 left-4 right-4 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                                    <h3 className="text-lg font-black text-white uppercase italic leading-none mb-1 drop-shadow-md truncate">
+                                        {deal.title}
+                                    </h3>
+                                    <p className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        Shop Now
+                                    </p>
+                                </div>
+                            </Link>
+                        </motion.div>
                     ))}
                 </div>
-            )}
+            </div>
         </section>
     );
 }

@@ -3,12 +3,16 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { ShoppingBag, Menu, Search, Heart } from "lucide-react"
+import { usePathname } from "next/navigation"
+import { ShoppingBag, Menu, Search, Heart, User, X, LogOut } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { AnnouncementBar } from "@/components/layout/announcement-bar"
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useAuth } from "@/hooks/useAuth"
 import { useCart } from "@/context/cart-context"
+import { cn } from "@/lib/utils"
 
 const navLinks = [
     { href: "/products?category=t-shirts", label: "T-Shirts" },
@@ -18,20 +22,41 @@ const navLinks = [
 ]
 
 export function Header() {
+    const pathname = usePathname()
+    // Header is transparent only on homepage and product details
+    const isTransparent = pathname === "/" || pathname.startsWith("/products/");
+
     return (
-        <>
-            <header className="sticky top-4 z-50 mx-auto w-[95%] max-w-7xl rounded-2xl border bg-background/80 shadow-sm backdrop-blur-md">
-                <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-                    <Logo />
-                    <DesktopNav />
-                    <div className="flex items-center gap-2 md:gap-4">
-                        <ActionButtons />
-                        <MobileNav />
+        <div className={cn(
+            "z-50 w-full transition-all duration-500",
+            isTransparent ? "absolute top-0" : "relative",
+        )}>
+            <AnnouncementBar />
+            <motion.header
+                className={cn(
+                    "w-full transition-all duration-500",
+                    isTransparent
+                        ? "bg-transparent py-4 md:py-6"
+                        : "bg-white dark:bg-zinc-950 shadow-sm border-b border-zinc-200/50 dark:border-zinc-800/50 py-3"
+                )}
+                initial={{ y: -100 }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.5 }}
+            >
+                <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
+                    <div className="flex items-center gap-12">
+                        <Logo isTransparent={isTransparent} />
+                        <DesktopNav pathname={pathname} isTransparent={isTransparent} />
+                    </div>
+
+                    <div className="flex items-center gap-2 md:gap-3">
+                        <ActionButtons isTransparent={isTransparent} />
+                        <MobileNav pathname={pathname} isTransparent={isTransparent} />
                     </div>
                 </div>
-            </header>
-            <MobileBottomNav />
-        </>
+            </motion.header>
+            <MobileBottomNav pathname={pathname} />
+        </div>
     )
 }
 
@@ -39,11 +64,11 @@ function LogoIcon() {
     const [error, setError] = useState(false)
 
     if (error) {
-        return <div className="h-8 w-8 rounded-lg bg-primary" />
+        return <div className="h-9 w-9 rounded-xl bg-gradient-primary" />
     }
 
     return (
-        <div className="relative h-8 w-8 overflow-hidden rounded-lg">
+        <div className="relative h-9 w-9 overflow-hidden rounded-xl shadow-lg ring-1 ring-black/5 transition-transform hover:scale-105 active:scale-95">
             <Image
                 src="/android-chrome-192x192.png"
                 alt="Urban Fox Logo"
@@ -55,182 +80,258 @@ function LogoIcon() {
     )
 }
 
-function Logo() {
+function Logo({ isTransparent }: { isTransparent: boolean }) {
     return (
-        <div className="flex items-center gap-2">
-            <Link href="/" className="flex items-center gap-2">
-                <LogoIcon />
-                <span className="text-xl font-bold tracking-tight">Urban Fox</span>
-            </Link>
-        </div>
+        <Link href="/" className="flex items-center gap-3 group">
+            <LogoIcon />
+            <span className={cn(
+                "text-xl font-bold tracking-tight transition-colors duration-300 group-hover:text-primary",
+                isTransparent ? "text-white" : "text-foreground"
+            )}>
+                Urban Fox
+            </span>
+        </Link>
     )
 }
 
-function DesktopNav() {
+function DesktopNav({ pathname, isTransparent }: { pathname: string, isTransparent: boolean }) {
     return (
-        <nav className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-                <Link
-                    key={link.href}
-                    href={link.href}
-                    className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                >
-                    {link.label}
-                </Link>
-            ))}
+        <nav className="hidden md:flex items-center gap-1">
+            {navLinks.map((link) => {
+                const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
+                return (
+                    <Link
+                        key={link.href}
+                        href={link.href}
+                        className={cn(
+                            "relative px-4 py-2 text-sm font-medium transition-colors hover:text-primary rounded-full",
+                            isActive
+                                ? "text-primary bg-primary/5"
+                                : isTransparent ? "text-white/90 hover:text-white hover:bg-white/10" : "text-muted-foreground"
+                        )}
+                    >
+                        {link.label}
+                        {isActive && (
+                            <motion.div
+                                layoutId="activeNav"
+                                className={cn(
+                                    "absolute inset-0 rounded-full -z-10",
+                                    isTransparent ? "bg-white/10" : "bg-primary/5"
+                                )}
+                                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                            />
+                        )}
+                    </Link>
+                )
+            })}
         </nav>
     )
 }
 
-function ActionButtons() {
+function ActionButtons({ isTransparent }: { isTransparent: boolean }) {
     const { user } = useAuth();
     const { cartCount } = useCart();
     const [mounted, setMounted] = useState(false);
 
-    // Prevent hydration mismatch by only rendering user-dependent UI after mount
     useEffect(() => {
         setMounted(true);
     }, []);
 
-    // Get user initials or default to "UF" (Urban Fox)
     const displayName = user?.displayName || user?.email?.split("@")[0] || "Urban Fox";
     const initials = user
         ? displayName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2)
         : "UF";
 
+    const buttonClass = cn(
+        "hidden md:flex rounded-full transition-colors",
+        isTransparent ? "text-white hover:bg-white/20" : "text-foreground hover:bg-secondary"
+    );
+
+    const cartButtonClass = cn(
+        "relative rounded-full transition-colors",
+        isTransparent ? "text-white hover:bg-white/20" : "text-foreground hover:bg-secondary"
+    );
+
     return (
         <>
-            <Button variant="ghost" size="icon" className="hidden md:flex">
+            <Button variant="ghost" size="icon" className={buttonClass}>
                 <Search className="h-5 w-5" />
                 <span className="sr-only">Search</span>
             </Button>
 
             <Link href="/profile/saved">
-                <Button variant="ghost" size="icon" className="hidden md:flex">
+                <Button variant="ghost" size="icon" className={buttonClass}>
                     <Heart className="h-5 w-5" />
                     <span className="sr-only">Wishlist</span>
                 </Button>
             </Link>
 
             <Link href="/cart">
-                <Button variant="ghost" size="icon" className="relative">
+                <Button variant="ghost" size="icon" className={cartButtonClass}>
                     <ShoppingBag className="h-5 w-5" />
                     {cartCount > 0 && (
-                        <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-black">
+                        <motion.span
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[10px] font-extrabold text-white shadow-md ring-2 ring-white dark:ring-black"
+                        >
                             {cartCount > 99 ? "99+" : cartCount}
-                        </span>
+                        </motion.span>
                     )}
                     <span className="sr-only">Cart</span>
                 </Button>
             </Link>
 
-            {mounted && (
-                <Link href={user ? "/profile" : "/login"} className="hidden md:block">
-                    <Avatar className="h-8 w-8 bg-orange-100">
+            {mounted && user ? (
+                <Link href="/profile" className="hidden md:block ml-2">
+                    <Avatar className="h-9 w-9 ring-2 ring-primary/10 transition-transform hover:scale-105 active:scale-95">
                         <AvatarImage src={user?.photoURL || "/avatars/01.png"} alt={displayName} />
-                        <AvatarFallback className="bg-orange-200 text-orange-900">
+                        <AvatarFallback className="bg-primary/10 text-primary font-bold">
                             {initials}
                         </AvatarFallback>
                     </Avatar>
+                </Link>
+            ) : mounted && (
+                <Link href="/login" className="hidden md:block ml-2">
+                    <Button variant="default" size="sm" className="bg-gradient-primary rounded-full px-5 hover:opacity-90 transition-opacity">
+                        Login
+                    </Button>
                 </Link>
             )}
         </>
     )
 }
 
-function MobileNav() {
+function MobileNav({ pathname, isTransparent }: { pathname: string, isTransparent: boolean }) {
     return (
         <Sheet>
             <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden">
-                    <Menu className="h-5 w-5" />
+                <Button variant="ghost" size="icon" className={cn("md:hidden rounded-full", isTransparent ? "text-white hover:bg-white/20" : "")}>
+                    <Menu className="h-6 w-6" />
                     <span className="sr-only">Toggle Menu</span>
                 </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+            <SheetContent side="left" className="w-[300px] sm:w-[400px] border-r border-white/20 bg-glass backdrop-blur-xl">
                 <div className="flex flex-col h-full">
-                    <div className="flex items-center gap-2 mb-8 px-2">
+                    <div className="flex items-center gap-3 mb-10 px-2 mt-4">
                         <LogoIcon />
                         <span className="text-xl font-bold tracking-tight">Urban Fox</span>
                     </div>
 
-                    <nav className="flex-1 flex flex-col gap-6 px-2">
-                        {navLinks.map((link) => (
-                            <Link
-                                key={link.href}
-                                href={link.href}
-                                className="text-lg font-medium text-muted-foreground transition-colors hover:text-foreground hover:translate-x-1 duration-200"
-                            >
-                                {link.label}
-                            </Link>
-                        ))}
+                    <nav className="flex-1 flex flex-col gap-2 px-2">
+                        {navLinks.map((link, idx) => {
+                            const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
+                            return (
+                                <motion.div
+                                    key={link.href}
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: idx * 0.1 }}
+                                >
+                                    <Link
+                                        href={link.href}
+                                        className={cn(
+                                            "flex items-center justify-between p-3 rounded-xl transition-all duration-300",
+                                            isActive
+                                                ? "bg-primary/5 text-primary font-semibold translate-x-2"
+                                                : "text-muted-foreground hover:text-foreground hover:bg-white/50"
+                                        )}
+                                    >
+                                        <span className="text-lg">{link.label}</span>
+                                        {isActive && <div className="h-2 w-2 rounded-full bg-primary" />}
+                                    </Link>
+                                </motion.div>
+                            )
+                        })}
                     </nav>
+
+                    <div className="mt-auto px-2 pb-6">
+                        <SheetClose asChild>
+                            <Button variant="outline" className="w-full rounded-xl border-dashed h-12">
+                                Close Menu
+                            </Button>
+                        </SheetClose>
+                    </div>
                 </div>
             </SheetContent>
         </Sheet>
     )
 }
 
-function MobileBottomNav() {
+function MobileBottomNav({ pathname }: { pathname: string }) {
     const { user } = useAuth();
     const { cartCount } = useCart();
     const [mounted, setMounted] = useState(false);
 
-    // Prevent hydration mismatch by only rendering user-dependent UI after mount
     useEffect(() => {
         setMounted(true);
     }, []);
 
-    // Get user initials or default to "UF" (Urban Fox)
-    const displayName = user?.displayName || user?.email?.split("@")[0] || "Urban Fox";
-    const initials = user
-        ? displayName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2)
-        : "UF";
-
     return (
-        <nav className="md:hidden fixed bottom-4 left-0 right-0 z-50 px-2">
-            <div className="mx-auto max-w-md rounded-2xl border bg-background/80 shadow-lg backdrop-blur-md">
-                <div className="flex items-center justify-around h-16 px-2">
-                    <Link href="/" className="flex flex-col items-center gap-1 px-3 py-2 text-muted-foreground hover:text-foreground transition-colors group">
-                        <div className="h-6 w-6 rounded-lg bg-primary/20 group-hover:bg-primary transition-colors flex items-center justify-center">
-                            <div className="h-3 w-3 rounded bg-primary group-hover:bg-background" />
-                        </div>
-                        <span className="text-xs font-medium">Home</span>
-                    </Link>
+        <nav className="md:hidden fixed bottom-4 left-4 right-4 z-50">
+            <div className="mx-auto max-w-md rounded-2xl bg-glass shadow-soft border border-white/20 backdrop-blur-xl">
+                <div className="flex items-center justify-around h-16 px-1">
+                    <BottomNavLink
+                        href="/"
+                        icon={<div className={cn("h-5 w-5 rounded transition-colors", pathname === "/" ? "bg-primary" : "bg-primary/30")} />}
+                        label="Home"
+                        active={pathname === "/"}
+                    />
 
-                    <Link href="/search" className="flex flex-col items-center gap-1 px-3 py-2 text-muted-foreground hover:text-foreground transition-colors group">
-                        <Search className="h-5 w-5 group-hover:text-primary transition-colors" />
-                        <span className="text-xs font-medium">Search</span>
-                    </Link>
+                    <BottomNavLink
+                        href="/search"
+                        icon={<Search className="h-5 w-5" />}
+                        label="Search"
+                        active={pathname === "/search"}
+                    />
 
-                    <Link href="/profile/saved" className="flex flex-col items-center gap-1 px-3 py-2 text-muted-foreground hover:text-foreground transition-colors group">
-                        <Heart className="h-5 w-5 group-hover:text-primary transition-colors" />
-                        <span className="text-xs font-medium">Wishlist</span>
-                    </Link>
+                    <BottomNavLink
+                        href="/cart"
+                        icon={<ShoppingBag className="h-5 w-5" />}
+                        label="Cart"
+                        active={pathname === "/cart"}
+                        badge={cartCount}
+                    />
 
-                    <Link href="/cart" className="flex flex-col items-center gap-1 px-3 py-2 text-muted-foreground hover:text-foreground transition-colors group relative">
-                        <ShoppingBag className="h-5 w-5 group-hover:text-primary transition-colors" />
-                        {cartCount > 0 && (
-                            <span className="absolute -top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-black">
-                                {cartCount > 99 ? "99+" : cartCount}
-                            </span>
-                        )}
-                        <span className="text-xs font-medium">Cart</span>
-                    </Link>
-
-                    <Link href={user ? "/profile" : "/login"} className="flex flex-col items-center gap-1 px-3 py-2 text-muted-foreground hover:text-foreground transition-colors group">
-                        {mounted ? (
-                            <Avatar className="h-5 w-5 border border-transparent group-hover:border-primary transition-colors">
+                    <BottomNavLink
+                        href={user ? "/profile" : "/login"}
+                        icon={mounted && user ? (
+                            <Avatar className="h-6 w-6">
                                 <AvatarImage src={user?.photoURL || "/avatars/01.png"} />
-                                <AvatarFallback className="text-[10px] bg-orange-200 text-orange-900">{initials}</AvatarFallback>
+                                <AvatarFallback className="text-[9px] bg-primary/10 text-primary">UF</AvatarFallback>
                             </Avatar>
                         ) : (
-                            <div className="h-5 w-5 rounded-full bg-muted" />
+                            <User className="h-5 w-5" />
                         )}
-                        <span className="text-xs font-medium">Account</span>
-                    </Link>
+                        label="Account"
+                        active={pathname.startsWith("/profile")}
+                    />
                 </div>
             </div>
         </nav>
+    )
+}
+
+function BottomNavLink({ href, icon, label, active, badge }: { href: string, icon: React.ReactNode, label: string, active: boolean, badge?: number }) {
+    return (
+        <Link
+            href={href}
+            className={cn(
+                "flex flex-col items-center gap-1 px-4 py-2 transition-all duration-300 relative group",
+                active ? "scale-110" : "scale-100 opacity-70 hover:opacity-100"
+            )}
+        >
+            <div className={cn("relative", active && "text-primary")}>
+                {icon}
+                {badge !== undefined && badge > 0 && (
+                    <span className="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-gradient-primary text-[9px] font-bold text-white shadow-sm ring-2 ring-white">
+                        {badge > 99 ? "99+" : badge}
+                    </span>
+                )}
+            </div>
+            <span className={cn("text-[10px] font-medium transition-colors", active ? "text-primary font-bold" : "text-muted-foreground")}>
+                {label}
+            </span>
+        </Link>
     )
 }

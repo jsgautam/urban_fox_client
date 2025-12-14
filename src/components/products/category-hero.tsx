@@ -25,7 +25,7 @@ export default function CategoryHero({
             />
 
             {/* Content Overlay */}
-            <div className="absolute inset-0 flex flex-col justify-center px-8 md:px-16">
+            <div className="absolute inset-0 flex flex-col justify-center pt-[100px] px-8 md:px-16">
                 <span className="mb-2 text-sm font-bold uppercase tracking-widest text-yellow-400">
                     THE {title} COLLECTION
                 </span>

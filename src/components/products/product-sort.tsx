@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 
 const sortOptions = [
-    { value: "newest", label: "Newest First" },
+    { value: "newest", label: "Newest Arrivals" },
     { value: "price-low", label: "Price: Low to High" },
     { value: "price-high", label: "Price: High to Low" },
     { value: "name-asc", label: "Name: A to Z" },
@@ -42,15 +42,15 @@ export default function ProductSort() {
     );
 
     return (
-        <div className="flex items-center gap-2">
-            <span className="text-sm text-zinc-500 dark:text-zinc-400">Sort by:</span>
+        <div className="flex items-center gap-3">
+            <span className="text-sm font-medium text-muted-foreground hidden sm:block">Sort by</span>
             <Select value={currentSort} onValueChange={handleSortChange}>
-                <SelectTrigger className="w-[180px] bg-white dark:bg-zinc-900">
+                <SelectTrigger className="w-[180px] rounded-xl border-border bg-background hover:bg-muted/50 transition-colors">
                     <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="rounded-xl border-border shadow-soft">
                     {sortOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
+                        <SelectItem key={option.value} value={option.value} className="focus:bg-primary/10 focus:text-primary rounded-lg my-1 cursor-pointer">
                             {option.label}
                         </SelectItem>
                     ))}

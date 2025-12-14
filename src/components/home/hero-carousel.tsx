@@ -1,10 +1,13 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import Link from "next/link";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 import { ApiClient } from "@/lib/api-client";
 import { Banner } from "@/types/banner";
+import { Button } from "@/components/ui/button";
 
 interface Slide {
     id: number;
@@ -27,32 +30,26 @@ export default function HeroCarousel() {
         const fetchBanners = async () => {
             try {
                 setError(null);
-
                 const response = await ApiClient.getBanners();
-
-                // Filter only active banners and map to Slide format
                 const activeBanners: Slide[] = response.banners
                     .filter((banner: Banner) => banner.is_active)
                     .map((banner: Banner, index: number) => ({
                         id: index + 1,
                         title: banner.title,
                         subtitle: banner.sub_text,
-                        buttonText: "Shop Now",
+                        buttonText: "Shop Collection",
                         buttonLink: banner.link,
                         image: banner.image,
                         imageAlt: banner.title,
                     }));
-
                 setSlides(activeBanners);
             } catch (err) {
                 console.error("Failed to fetch banners:", err);
                 setError("Failed to load banners");
             }
         };
-
         fetchBanners();
     }, []);
-
 
     const nextSlide = useCallback(() => {
         setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -69,123 +66,110 @@ export default function HeroCarousel() {
 
     useEffect(() => {
         if (!isAutoPlaying || slides.length === 0) return;
-
-        const interval = setInterval(() => {
-            nextSlide();
-        }, 5000); // Auto-advance every 5 seconds
-
+        const interval = setInterval(() => nextSlide(), 6000);
         return () => clearInterval(interval);
     }, [isAutoPlaying, nextSlide, slides.length]);
 
-    const handlePrevClick = () => {
-        setIsAutoPlaying(false);
-        prevSlide();
-    };
-
-    const handleNextClick = () => {
-        setIsAutoPlaying(false);
-        nextSlide();
-    };
+    if (error || (slides.length === 0 && !error)) {
+        return (
+            <div className="w-full h-[60vh] flex items-center justify-center bg-muted/20 rounded-3xl border border-dashed">
+                <p className="text-muted-foreground">{error || "No current offers"}</p>
+            </div>
+        );
+    }
 
     return (
-        <div className="relative w-full overflow-hidden rounded-2xl bg-black shadow-2xl">
-            {/* Error State */}
-            {error && (
-                <div className="relative h-[400px] md:h-[500px] lg:h-[600px] flex items-center justify-center">
-                    <div className="text-center space-y-4 px-4">
-                        <p className="text-white/80 text-lg">{error}</p>
-                        <p className="text-white/60 text-sm">Please try again later</p>
-                    </div>
-                </div>
-            )}
+        <div className="relative w-full h-[110vh] min-h-[700px] overflow-hidden bg-black mx-auto">
+            <AnimatePresence mode="wait">
+                {slides.map((slide, index) => (
+                    index === currentSlide && (
+                        <motion.div
+                            key={slide.id}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.7 }}
+                            className="absolute inset-0"
+                        >
+                            <Image
+                                src={slide.image}
+                                alt={slide.imageAlt}
+                                fill
+                                className="object-cover"
+                                priority={index === 0}
+                                quality={100}
+                                sizes="100vw"
+                            />
+                            {/* Overlay Gradient */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
 
-            {/* Empty State */}
-            {!error && slides.length === 0 && (
-                <div className="relative h-[400px] md:h-[500px] lg:h-[600px] flex items-center justify-center">
-                    <div className="text-center space-y-4 px-4">
-                        <p className="text-white/80 text-lg">No banners available</p>
-                    </div>
-                </div>
-            )}
+                            {/* Content */}
+                            <div className="absolute inset-0 flex items-center justify-center text-center p-6 pt-[100px]">
+                                <div className="max-w-4xl space-y-8">
+                                    <motion.h2
+                                        initial={{ y: 20, opacity: 0 }}
+                                        animate={{ y: 0, opacity: 1 }}
+                                        transition={{ delay: 0.3, duration: 0.6 }}
+                                        className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter text-white"
+                                    >
+                                        {slide.title}
+                                    </motion.h2>
 
-            {/* Slides Container */}
-            {!error && slides.length > 0 && (
-                <>
-                    <div className="relative h-[400px] md:h-[500px] lg:h-[600px]">
-                        {slides.map((slide, index) => (
-                            <div
-                                key={slide.id}
-                                className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${index === currentSlide ? "opacity-100" : "opacity-0"
-                                    }`}
-                            >
-                                {/* Background Image */}
-                                <div className="absolute inset-0">
-                                    <Image
-                                        src={slide.image}
-                                        alt={slide.imageAlt}
-                                        fill
-                                        className="object-cover"
-                                        priority={index === 0}
-                                    />
-                                    {/* Dark Overlay for better text readability */}
-                                    <div className="absolute inset-0 bg-black/30" />
-                                </div>
+                                    <motion.p
+                                        initial={{ y: 20, opacity: 0 }}
+                                        animate={{ y: 0, opacity: 1 }}
+                                        transition={{ delay: 0.5, duration: 0.6 }}
+                                        className="text-base md:text-xl text-neutral-200 max-w-xl mx-auto font-light leading-relaxed"
+                                    >
+                                        {slide.subtitle}
+                                    </motion.p>
 
-                                {/* Content */}
-                                <div className="relative flex h-full items-center justify-center px-4 text-center">
-                                    <div className="max-w-3xl space-y-6">
-                                        <h2 className="text-4xl font-bold tracking-tight text-white md:text-5xl lg:text-6xl">
-                                            {slide.title}
-                                        </h2>
-                                        <p className="mx-auto max-w-2xl text-base text-white/90 md:text-lg lg:text-xl">
-                                            {slide.subtitle}
-                                        </p>
-                                        <div className="pt-4">
-                                            <a
-                                                href={slide.buttonLink}
-                                                className="inline-block rounded-full bg-primary px-8 py-3 text-sm font-semibold text-black transition-all duration-300 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/50"
-                                            >
-                                                {slide.buttonText}
-                                            </a>
-                                        </div>
-                                    </div>
+                                    <motion.div
+                                        initial={{ y: 20, opacity: 0 }}
+                                        animate={{ y: 0, opacity: 1 }}
+                                        transition={{ delay: 0.7, duration: 0.6 }}
+                                    >
+                                        <Link href={slide.buttonLink || "/products"}>
+                                            <span className="group relative inline-flex items-center gap-3 px-8 py-3.5 bg-gradient-to-r from-primary to-orange-600 text-white rounded-full font-bold text-base shadow-xl shadow-orange-500/20 hover:shadow-orange-500/40 hover:scale-105 active:scale-95 transition-all duration-300 overflow-hidden cursor-pointer">
+                                                <span className="relative z-10 drop-shadow-sm">Grab Now</span>
+                                                <ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform drop-shadow-sm" />
+                                                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300 mix-blend-overlay" />
+                                            </span>
+                                        </Link>
+                                    </motion.div>
                                 </div>
                             </div>
-                        ))}
-                    </div>
+                        </motion.div>
+                    )
+                ))}
+            </AnimatePresence>
 
-                    {/* Navigation Arrows */}
+            {/* Navigation */}
+            <div className="absolute bottom-10 left-0 right-0 z-20 flex justify-center gap-3">
+                {slides.map((_, index) => (
                     <button
-                        onClick={handlePrevClick}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-2 text-white backdrop-blur-sm transition-all duration-300 hover:bg-white/20 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white/50 md:left-6 md:p-3"
-                        aria-label="Previous slide"
-                    >
-                        <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
-                    </button>
-                    <button
-                        onClick={handleNextClick}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-2 text-white backdrop-blur-sm transition-all duration-300 hover:bg-white/20 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white/50 md:right-6 md:p-3"
-                        aria-label="Next slide"
-                    >
-                        <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
-                    </button>
+                        key={index}
+                        onClick={() => goToSlide(index)}
+                        className={`h-1.5 rounded-full transition-all duration-500 ${index === currentSlide ? "w-12 bg-white" : "w-2 bg-white/30 hover:bg-white/50"
+                            }`}
+                        aria-label={`Go to slide ${index + 1}`}
+                    />
+                ))}
+            </div>
 
-                    {/* Indicators */}
-                    <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-2">
-                        {slides.map((_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => goToSlide(index)}
-                                className={`h-2 rounded-full transition-all duration-300 ${index === currentSlide
-                                    ? "w-8 bg-white"
-                                    : "w-2 bg-white/50 hover:bg-white/75"
-                                    }`}
-                                aria-label={`Go to slide ${index + 1}`}
-                            />
-                        ))}
-                    </div>
-                </>
-            )}
+            <button
+                onClick={() => { setIsAutoPlaying(false); prevSlide(); }}
+                className="absolute left-8 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white transition-all opacity-0 hover:opacity-100 group-hover:opacity-100"
+            >
+                <ChevronLeft className="h-6 w-6" />
+            </button>
+
+            <button
+                onClick={() => { setIsAutoPlaying(false); nextSlide(); }}
+                className="absolute right-8 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white transition-all opacity-0 hover:opacity-100 group-hover:opacity-100"
+            >
+                <ChevronRight className="h-6 w-6" />
+            </button>
         </div>
     );
 }

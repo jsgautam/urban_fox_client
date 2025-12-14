@@ -1,12 +1,15 @@
 "use client";
 
-import { useCallback, useMemo, useEffect, useRef } from "react";
+import { useCallback, useMemo, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import { useState } from "react";
+import { ChevronDown, ChevronUp, Filter, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
 
 const categories = [
     { id: "t-shirts", label: "T-Shirts" },
@@ -14,6 +17,7 @@ const categories = [
     { id: "sweatshirts", label: "Sweatshirts" },
     { id: "jackets", label: "Jackets" },
     { id: "bottoms", label: "Bottoms" },
+    { id: "accessories", label: "Accessories" },
 ];
 
 const colors = [
@@ -21,15 +25,43 @@ const colors = [
     { id: "white", class: "bg-white border border-zinc-200", label: "White" },
     { id: "gray", class: "bg-zinc-500", label: "Gray" },
     { id: "blue", class: "bg-blue-500", label: "Blue" },
-    { id: "green", class: "bg-green-500", label: "Green" },
+    { id: "green", class: "bg-emerald-500", label: "Green" },
     { id: "red", class: "bg-red-500", label: "Red" },
     { id: "yellow", class: "bg-yellow-400", label: "Yellow" },
     { id: "purple", class: "bg-purple-500", label: "Purple" },
 ];
 
-const sizes = ["S", "M", "L", "XL", "XXL"];
+const sizes = ["XS", "S", "M", "L", "XL", "XXL"];
 
 export default function ProductFilters() {
+    return (
+        <>
+            {/* Desktop Filters */}
+            <div className="hidden lg:block w-64 space-y-8 sticky top-24 h-fit">
+                <FilterContent />
+            </div>
+
+            {/* Mobile Filters */}
+            <div className="lg:hidden">
+                <Sheet>
+                    <SheetTrigger asChild>
+                        <Button variant="outline" className="gap-2 rounded-xl">
+                            <Filter className="h-4 w-4" /> Filters
+                        </Button>
+                    </SheetTrigger>
+                    <SheetContent side="left" className="w-[300px] sm:w-[350px]">
+                        <SheetTitle className="text-lg font-bold mb-6">Filters</SheetTitle>
+                        <ScrollArea className="h-[calc(100vh-100px)] pr-4">
+                            <FilterContent />
+                        </ScrollArea>
+                    </SheetContent>
+                </Sheet>
+            </div>
+        </>
+    );
+}
+
+function FilterContent() {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -89,21 +121,18 @@ export default function ProductFilters() {
     const handlePriceChange = (values: number[]) => {
         setPriceRange(values);
 
-        // Clear existing timer
         if (debounceTimerRef.current) {
             clearTimeout(debounceTimerRef.current);
         }
 
-        // Set new debounced update
         debounceTimerRef.current = setTimeout(() => {
             updateFilters({
                 minPrice: values[0] > 0 ? String(values[0]) : null,
                 maxPrice: values[1] < 10000 ? String(values[1]) : null,
             });
-        }, 300); // 300ms debounce for responsive feel
+        }, 300);
     };
 
-    // Cleanup debounce timer on unmount
     useEffect(() => {
         return () => {
             if (debounceTimerRef.current) {
@@ -112,7 +141,6 @@ export default function ProductFilters() {
         };
     }, []);
 
-    // Handle category selection
     const handleCategoryChange = (categoryId: string, checked: boolean) => {
         if (checked) {
             updateFilters({ category: categoryId });
@@ -121,7 +149,6 @@ export default function ProductFilters() {
         }
     };
 
-    // Handle color selection (multiple)
     const handleColorChange = (colorId: string) => {
         const newColors = currentColors.includes(colorId)
             ? currentColors.filter((c) => c !== colorId)
@@ -130,7 +157,6 @@ export default function ProductFilters() {
         updateFilters({ colors: newColors.length > 0 ? newColors.join(",") : null });
     };
 
-    // Handle size selection (multiple)
     const handleSizeChange = (size: string) => {
         const newSizes = currentSizes.includes(size)
             ? currentSizes.filter((s) => s !== size)
@@ -139,63 +165,56 @@ export default function ProductFilters() {
         updateFilters({ sizes: newSizes.length > 0 ? newSizes.join(",") : null });
     };
 
-    // Clear all filters
     const handleClearAll = () => {
         setPriceRange([0, 10000]);
         router.push(pathname, { scroll: false });
     };
 
-    // Check if any filters are active
     const hasActiveFilters = useMemo(() => {
         return currentCategory || currentColors.length > 0 || currentSizes.length > 0 || minPrice > 0 || maxPrice < 10000;
     }, [currentCategory, currentColors, currentSizes, minPrice, maxPrice]);
 
     return (
-        <div className="w-full space-y-8 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
-                    Filters
-                </h3>
-                {hasActiveFilters && (
+        <div className="space-y-4">
+            {hasActiveFilters && (
+                <div className="flex items-center justify-between bg-primary/5 p-3 rounded-xl mb-6">
+                    <span className="text-sm font-medium text-primary">Active Filters</span>
                     <button
                         onClick={handleClearAll}
-                        className="text-sm text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+                        className="text-xs font-bold text-red-500 hover:text-red-600 flex items-center gap-1"
                     >
-                        Clear All
+                        Clear All <X className="h-3 w-3" />
                     </button>
-                )}
-            </div>
-
-            <div className="h-px bg-zinc-200 dark:bg-zinc-800" />
+                </div>
+            )}
 
             {/* Categories */}
-            <div className="space-y-4">
+            <div className="py-2">
                 <button
                     onClick={() => setIsCategoryOpen(!isCategoryOpen)}
-                    className="flex w-full items-center justify-between text-sm font-bold text-zinc-900 dark:text-zinc-50"
+                    className="flex w-full items-center justify-between text-base font-bold text-foreground mb-3"
                 >
                     <span>Categories</span>
-                    {isCategoryOpen ? (
-                        <ChevronUp className="h-4 w-4" />
-                    ) : (
-                        <ChevronDown className="h-4 w-4" />
-                    )}
+                    <ChevronDown className={cn("h-4 w-4 transition-transform", isCategoryOpen && "rotate-180")} />
                 </button>
                 {isCategoryOpen && (
-                    <div className="space-y-2">
+                    <div className="space-y-3 pl-1">
                         {categories.map((category) => (
-                            <div key={category.id} className="flex items-center space-x-2">
+                            <div key={category.id} className="flex items-center space-x-3 group">
                                 <Checkbox
                                     id={category.id}
                                     checked={currentCategory === category.id}
                                     onCheckedChange={(checked) =>
                                         handleCategoryChange(category.id, checked as boolean)
                                     }
+                                    className="data-[state=checked]:bg-gradient-primary border-neutral-300 dark:border-neutral-600 rounded-md"
                                 />
                                 <Label
                                     htmlFor={category.id}
-                                    className="text-sm font-medium text-zinc-600 dark:text-zinc-400 cursor-pointer"
+                                    className={cn(
+                                        "text-sm font-medium cursor-pointer transition-colors group-hover:text-primary",
+                                        currentCategory === category.id ? "text-primary" : "text-muted-foreground"
+                                    )}
                                 >
                                     {category.label}
                                 </Label>
@@ -205,23 +224,19 @@ export default function ProductFilters() {
                 )}
             </div>
 
-            <div className="h-px bg-zinc-200 dark:bg-zinc-800" />
+            <div className="h-px bg-border/50" />
 
             {/* Price Range */}
-            <div className="space-y-4">
+            <div className="py-2">
                 <button
                     onClick={() => setIsPriceOpen(!isPriceOpen)}
-                    className="flex w-full items-center justify-between text-sm font-bold text-zinc-900 dark:text-zinc-50"
+                    className="flex w-full items-center justify-between text-base font-bold text-foreground mb-4"
                 >
-                    <span>Price Range</span>
-                    {isPriceOpen ? (
-                        <ChevronUp className="h-4 w-4" />
-                    ) : (
-                        <ChevronDown className="h-4 w-4" />
-                    )}
+                    <span>Price</span>
+                    <ChevronDown className={cn("h-4 w-4 transition-transform", isPriceOpen && "rotate-180")} />
                 </button>
                 {isPriceOpen && (
-                    <>
+                    <div className="px-1">
                         <Slider
                             defaultValue={[0, 10000]}
                             max={10000}
@@ -230,28 +245,24 @@ export default function ProductFilters() {
                             onValueChange={handlePriceChange}
                             className="py-4"
                         />
-                        <div className="flex items-center justify-between text-sm font-medium text-zinc-600 dark:text-zinc-400">
+                        <div className="flex items-center justify-between text-sm font-medium text-muted-foreground mt-2">
                             <span>₹{priceRange[0]}</span>
                             <span>₹{priceRange[1]}</span>
                         </div>
-                    </>
+                    </div>
                 )}
             </div>
 
-            <div className="h-px bg-zinc-200 dark:bg-zinc-800" />
+            <div className="h-px bg-border/50" />
 
             {/* Colors */}
-            <div className="space-y-4">
+            <div className="py-2">
                 <button
                     onClick={() => setIsColorOpen(!isColorOpen)}
-                    className="flex w-full items-center justify-between text-sm font-bold text-zinc-900 dark:text-zinc-50"
+                    className="flex w-full items-center justify-between text-base font-bold text-foreground mb-4"
                 >
                     <span>Color</span>
-                    {isColorOpen ? (
-                        <ChevronUp className="h-4 w-4" />
-                    ) : (
-                        <ChevronDown className="h-4 w-4" />
-                    )}
+                    <ChevronDown className={cn("h-4 w-4 transition-transform", isColorOpen && "rotate-180")} />
                 </button>
                 {isColorOpen && (
                     <div className="flex flex-wrap gap-3">
@@ -259,10 +270,11 @@ export default function ProductFilters() {
                             <button
                                 key={color.id}
                                 onClick={() => handleColorChange(color.id)}
-                                className={`h-8 w-8 rounded-full ${color.class} ring-2 ring-offset-2 transition-all hover:scale-110 dark:ring-offset-zinc-900 ${currentColors.includes(color.id)
-                                        ? "ring-primary"
-                                        : "ring-transparent hover:ring-zinc-300 dark:hover:ring-zinc-600"
-                                    }`}
+                                className={cn(
+                                    "h-8 w-8 rounded-full transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
+                                    color.class,
+                                    currentColors.includes(color.id) && "ring-2 ring-primary ring-offset-2 scale-110"
+                                )}
                                 aria-label={`Select ${color.label} color`}
                                 title={color.label}
                             />
@@ -271,20 +283,16 @@ export default function ProductFilters() {
                 )}
             </div>
 
-            <div className="h-px bg-zinc-200 dark:bg-zinc-800" />
+            <div className="h-px bg-border/50" />
 
             {/* Sizes */}
-            <div className="space-y-4">
+            <div className="py-2">
                 <button
                     onClick={() => setIsSizeOpen(!isSizeOpen)}
-                    className="flex w-full items-center justify-between text-sm font-bold text-zinc-900 dark:text-zinc-50"
+                    className="flex w-full items-center justify-between text-base font-bold text-foreground mb-4"
                 >
                     <span>Size</span>
-                    {isSizeOpen ? (
-                        <ChevronUp className="h-4 w-4" />
-                    ) : (
-                        <ChevronDown className="h-4 w-4" />
-                    )}
+                    <ChevronDown className={cn("h-4 w-4 transition-transform", isSizeOpen && "rotate-180")} />
                 </button>
                 {isSizeOpen && (
                     <div className="flex flex-wrap gap-2">
@@ -292,10 +300,12 @@ export default function ProductFilters() {
                             <button
                                 key={size}
                                 onClick={() => handleSizeChange(size)}
-                                className={`flex h-10 w-14 items-center justify-center rounded-md border text-sm font-medium transition-all ${currentSizes.includes(size)
-                                        ? "border-primary bg-primary/10 text-primary"
-                                        : "border-zinc-200 bg-white text-zinc-900 hover:border-zinc-900 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50 dark:hover:border-zinc-50 dark:hover:bg-zinc-700"
-                                    }`}
+                                className={cn(
+                                    "flex h-10 w-12 items-center justify-center rounded-xl border text-sm font-medium transition-all",
+                                    currentSizes.includes(size)
+                                        ? "border-primary bg-primary text-primary-foreground shadow-md scale-105"
+                                        : "border-border bg-background text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                                )}
                             >
                                 {size}
                             </button>

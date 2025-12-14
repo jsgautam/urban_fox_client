@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Loader2, CreditCard, Truck, MapPin } from "lucide-react";
+import { ArrowLeft, Loader2, CreditCard, Truck, MapPin, ShieldCheck, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,6 +12,7 @@ import { useCart } from "@/context/cart-context";
 import { useAuth } from "@/hooks/useAuth";
 import { ApiClient } from "@/lib/api-client";
 import Script from "next/script";
+import Image from "next/image";
 
 declare global {
     interface Window {
@@ -122,17 +123,14 @@ export default function CheckoutPage() {
 
                 if (response.success) {
                     await clearCart();
-                    // Fix: Redirect to thank you page with order ID (handle both structures if needed)
-                    // Assuming response.order_id is correct for COD based on ApiClient
                     router.push(`/thank-you?orderId=${response.order_id}`);
                 } else {
                     alert(response.message || "Failed to place order");
                 }
             } else {
                 // For Online Payment
-                // 1. Create Payment Order
                 const paymentOrderResponse = await ApiClient.createPaymentOrder(user, {
-                    amount: total, // Passing total amount
+                    amount: total,
                     currency: "INR",
                     items: cartItems.map((item) => ({
                         variant_id: item.variant_id,
@@ -154,23 +152,18 @@ export default function CheckoutPage() {
                     throw new Error(paymentOrderResponse.message || "Failed to initiate payment");
                 }
 
-                const dbOrderId = paymentOrderResponse.db_order_id; // Capture db_order_id from response
-                if (!dbOrderId) {
-                    console.warn("db_order_id missing in createPaymentOrder response");
-                }
+                const dbOrderId = paymentOrderResponse.db_order_id;
 
-                // 2. Open Razorpay Modal
                 const options = {
                     key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
                     amount: paymentOrderResponse.order.amount,
                     currency: paymentOrderResponse.order.currency,
                     name: "Urban Fox",
                     description: "Order Payment",
-                    image: "/android-chrome-192x192.png", // Optional logo
+                    image: "/android-chrome-192x192.png",
                     order_id: paymentOrderResponse.order.id,
                     handler: async function (response: any) {
                         try {
-                            // 3. Verify Payment
                             const verifyRes = await ApiClient.verifyPayment(user, {
                                 razorpay_order_id: response.razorpay_order_id,
                                 razorpay_payment_id: response.razorpay_payment_id,
@@ -180,7 +173,6 @@ export default function CheckoutPage() {
 
                             if (verifyRes.success) {
                                 await clearCart();
-                                // Fix: Check where order_id is located. Sometimes it's inside an 'order' object or at the root.
                                 router.push(`/thank-you?orderId=${dbOrderId}`);
                             } else {
                                 alert("Payment verification failed. Please contact support.");
@@ -196,7 +188,7 @@ export default function CheckoutPage() {
                         contact: formData.phone,
                     },
                     theme: {
-                        color: "#000000", // Matches website theme
+                        color: "#FA9B25",
                     },
                     modal: {
                         ondismiss: function () {
@@ -212,7 +204,6 @@ export default function CheckoutPage() {
                 });
 
                 rzp1.open();
-                // Don't set submitting to false here, wait for modal dismiss or success
                 return;
             }
 
@@ -229,158 +220,149 @@ export default function CheckoutPage() {
 
     if (cartItems.length === 0) {
         return (
-            <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
-                <div className="container mx-auto px-4 py-8 md:px-6 lg:px-8">
-                    <div className="rounded-2xl border border-zinc-200 bg-white p-12 text-center dark:border-zinc-800 dark:bg-zinc-900">
-                        <h2 className="mb-2 text-xl font-bold text-zinc-900 dark:text-zinc-50">
-                            Your cart is empty
-                        </h2>
-                        <p className="mb-6 text-zinc-600 dark:text-zinc-400">
-                            Add some items before checkout
-                        </p>
-                        <Button asChild className="rounded-full">
-                            <Link href="/products">Continue Shopping</Link>
-                        </Button>
-                    </div>
+            <div className="min-h-screen bg-neutral-50 dark:bg-zinc-950 flex items-center justify-center">
+                <div className="rounded-[2.5rem] border border-zinc-200 bg-white p-12 text-center dark:border-zinc-800 dark:bg-zinc-900 max-w-md shadow-soft">
+                    <h2 className="mb-2 text-2xl font-bold text-foreground">
+                        No items to checkout
+                    </h2>
+                    <p className="mb-8 text-muted-foreground">
+                        Your cart is empty.
+                    </p>
+                    <Button asChild className="rounded-full px-8">
+                        <Link href="/products">Continue Shopping</Link>
+                    </Button>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-zinc-50 pb-20 dark:bg-zinc-950">
-            <div className="container mx-auto px-4 py-8 md:px-6 lg:px-8">
+        <div className="min-h-screen bg-neutral-50 pb-20 dark:bg-black/20">
+            <div className="container mx-auto px-4 py-8 md:px-6 lg:px-8 max-w-7xl">
                 {/* Back Link */}
                 <Link
                     href="/cart"
-                    className="mb-6 inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+                    className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
                 >
                     <ArrowLeft className="h-4 w-4" />
                     Back to Cart
                 </Link>
 
                 {/* Header */}
-                <h1 className="mb-8 text-3xl font-bold text-zinc-900 dark:text-zinc-50 md:text-4xl">
-                    Checkout
-                </h1>
+                <div className="flex items-center justify-between mb-10">
+                    <h1 className="text-3xl font-black text-foreground md:text-5xl">
+                        Checkout
+                    </h1>
+                    <div className="flex items-center gap-2 text-sm font-medium bg-green-50 text-green-700 px-3 py-1 rounded-full border border-green-200 dark:bg-green-900/10 dark:text-green-400 dark:border-green-900/20">
+                        <ShieldCheck className="h-4 w-4" /> Secure & Encrypted
+                    </div>
+                </div>
 
-                <div className="grid gap-8 lg:grid-cols-3">
+                <div className="grid gap-10 lg:grid-cols-12">
                     {/* Left Column - Form */}
-                    <div className="space-y-8 lg:col-span-2">
+                    <div className="space-y-8 lg:col-span-8">
                         {/* Shipping Address */}
-                        <div className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
-                            <div className="mb-6 flex items-center gap-2">
-                                <MapPin className="h-5 w-5 text-primary" />
-                                <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
+                        <div className="rounded-[2rem] border border-border/50 bg-card p-6 md:p-8 shadow-sm">
+                            <div className="mb-8 flex items-center gap-3">
+                                <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center text-primary">
+                                    <MapPin className="h-5 w-5" />
+                                </div>
+                                <h2 className="text-xl font-bold text-foreground">
                                     Shipping Address
                                 </h2>
                             </div>
 
-                            <div className="grid gap-4 sm:grid-cols-2">
+                            <div className="grid gap-6 sm:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label htmlFor="fullName">Full Name *</Label>
+                                    <Label htmlFor="fullName">Full Name</Label>
                                     <Input
                                         id="fullName"
                                         name="fullName"
                                         value={formData.fullName}
                                         onChange={handleInputChange}
-                                        placeholder="Enter your full name"
-                                        className={errors.fullName ? "border-red-500" : ""}
+                                        placeholder="John Doe"
+                                        className={`rounded-xl h-11 bg-muted/30 ${errors.fullName ? "border-red-500" : ""}`}
                                     />
-                                    {errors.fullName && (
-                                        <p className="text-xs text-red-500">{errors.fullName}</p>
-                                    )}
+                                    {errors.fullName && <p className="text-xs text-red-500 font-medium ml-1">{errors.fullName}</p>}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="phone">Phone Number *</Label>
+                                    <Label htmlFor="phone">Phone Number</Label>
                                     <Input
                                         id="phone"
                                         name="phone"
                                         value={formData.phone}
                                         onChange={handleInputChange}
-                                        placeholder="10-digit phone number"
-                                        className={errors.phone ? "border-red-500" : ""}
+                                        placeholder="10-digit number"
+                                        className={`rounded-xl h-11 bg-muted/30 ${errors.phone ? "border-red-500" : ""}`}
                                     />
-                                    {errors.phone && (
-                                        <p className="text-xs text-red-500">{errors.phone}</p>
-                                    )}
+                                    {errors.phone && <p className="text-xs text-red-500 font-medium ml-1">{errors.phone}</p>}
                                 </div>
 
                                 <div className="space-y-2 sm:col-span-2">
-                                    <Label htmlFor="email">Email *</Label>
+                                    <Label htmlFor="email">Email Address</Label>
                                     <Input
                                         id="email"
                                         name="email"
                                         type="email"
                                         value={formData.email}
                                         onChange={handleInputChange}
-                                        placeholder="your.email@example.com"
-                                        className={errors.email ? "border-red-500" : ""}
+                                        placeholder="john@example.com"
+                                        className={`rounded-xl h-11 bg-muted/30 ${errors.email ? "border-red-500" : ""}`}
                                     />
-                                    {errors.email && (
-                                        <p className="text-xs text-red-500">{errors.email}</p>
-                                    )}
+                                    {errors.email && <p className="text-xs text-red-500 font-medium ml-1">{errors.email}</p>}
                                 </div>
 
                                 <div className="space-y-2 sm:col-span-2">
-                                    <Label htmlFor="street">Street Address *</Label>
+                                    <Label htmlFor="street">Street Address</Label>
                                     <Input
                                         id="street"
                                         name="street"
                                         value={formData.street}
                                         onChange={handleInputChange}
-                                        placeholder="House/Flat No., Street, Area"
-                                        className={errors.street ? "border-red-500" : ""}
+                                        placeholder="House No., Building, Street"
+                                        className={`rounded-xl h-11 bg-muted/30 ${errors.street ? "border-red-500" : ""}`}
                                     />
-                                    {errors.street && (
-                                        <p className="text-xs text-red-500">{errors.street}</p>
-                                    )}
+                                    {errors.street && <p className="text-xs text-red-500 font-medium ml-1">{errors.street}</p>}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="city">City *</Label>
+                                    <Label htmlFor="city">City</Label>
                                     <Input
                                         id="city"
                                         name="city"
                                         value={formData.city}
                                         onChange={handleInputChange}
-                                        placeholder="Enter city"
-                                        className={errors.city ? "border-red-500" : ""}
+                                        placeholder="City"
+                                        className={`rounded-xl h-11 bg-muted/30 ${errors.city ? "border-red-500" : ""}`}
                                     />
-                                    {errors.city && (
-                                        <p className="text-xs text-red-500">{errors.city}</p>
-                                    )}
+                                    {errors.city && <p className="text-xs text-red-500 font-medium ml-1">{errors.city}</p>}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="state">State *</Label>
+                                    <Label htmlFor="state">State</Label>
                                     <Input
                                         id="state"
                                         name="state"
                                         value={formData.state}
                                         onChange={handleInputChange}
-                                        placeholder="Enter state"
-                                        className={errors.state ? "border-red-500" : ""}
+                                        placeholder="State"
+                                        className={`rounded-xl h-11 bg-muted/30 ${errors.state ? "border-red-500" : ""}`}
                                     />
-                                    {errors.state && (
-                                        <p className="text-xs text-red-500">{errors.state}</p>
-                                    )}
+                                    {errors.state && <p className="text-xs text-red-500 font-medium ml-1">{errors.state}</p>}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="pincode">Pincode *</Label>
+                                    <Label htmlFor="pincode">Pincode</Label>
                                     <Input
                                         id="pincode"
                                         name="pincode"
                                         value={formData.pincode}
                                         onChange={handleInputChange}
-                                        placeholder="6-digit pincode"
-                                        className={errors.pincode ? "border-red-500" : ""}
+                                        placeholder="000000"
+                                        className={`rounded-xl h-11 bg-muted/30 ${errors.pincode ? "border-red-500" : ""}`}
                                     />
-                                    {errors.pincode && (
-                                        <p className="text-xs text-red-500">{errors.pincode}</p>
-                                    )}
+                                    {errors.pincode && <p className="text-xs text-red-500 font-medium ml-1">{errors.pincode}</p>}
                                 </div>
 
                                 <div className="space-y-2">
@@ -391,126 +373,134 @@ export default function CheckoutPage() {
                                         value={formData.landmark}
                                         onChange={handleInputChange}
                                         placeholder="Near..."
+                                        className="rounded-xl h-11 bg-muted/30"
                                     />
                                 </div>
                             </div>
                         </div>
 
                         {/* Payment Method */}
-                        <div className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
-                            <div className="mb-6 flex items-center gap-2">
-                                <CreditCard className="h-5 w-5 text-primary" />
-                                <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
+                        <div className="rounded-[2rem] border border-border/50 bg-card p-6 md:p-8 shadow-sm">
+                            <div className="mb-8 flex items-center gap-3">
+                                <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center text-primary">
+                                    <CreditCard className="h-5 w-5" />
+                                </div>
+                                <h2 className="text-xl font-bold text-foreground">
                                     Payment Method
                                 </h2>
                             </div>
 
                             <RadioGroup value={paymentMethod} onValueChange={(value) => setPaymentMethod(value as "cod" | "online")}>
-                                <div className="space-y-3">
-                                    <div className="flex items-center space-x-3 rounded-lg border border-zinc-200 p-4 dark:border-zinc-700">
+                                <div className="space-y-4">
+                                    <Label
+                                        htmlFor="cod"
+                                        className={`flex items-center space-x-4 rounded-xl border p-5 cursor-pointer transition-all ${paymentMethod === 'cod' ? 'border-primary bg-primary/5 ring-1 ring-primary ring-offset-2' : 'border-border hover:border-primary/50'}`}
+                                    >
                                         <RadioGroupItem value="cod" id="cod" />
-                                        <Label htmlFor="cod" className="flex-1 cursor-pointer">
-                                            <div className="font-medium">Cash on Delivery</div>
-                                            <div className="text-sm text-zinc-500">
-                                                Pay when your order arrives
+                                        <div className="flex-1">
+                                            <div className="font-bold text-base">Cash on Delivery</div>
+                                            <div className="text-sm text-muted-foreground mt-0.5">
+                                                Pay comfortably when your order arrives
                                             </div>
-                                        </Label>
-                                        <Truck className="h-5 w-5 text-zinc-400" />
-                                    </div>
+                                        </div>
+                                        <Truck className={`h-6 w-6 ${paymentMethod === 'cod' ? 'text-primary' : 'text-zinc-300'}`} />
+                                    </Label>
 
-                                    <div className="flex items-center space-x-3 rounded-lg border border-zinc-200 p-4 dark:border-zinc-700">
+                                    <Label
+                                        htmlFor="online"
+                                        className={`flex items-center space-x-4 rounded-xl border p-5 cursor-pointer transition-all ${paymentMethod === 'online' ? 'border-primary bg-primary/5 ring-1 ring-primary ring-offset-2' : 'border-border hover:border-primary/50'}`}
+                                    >
                                         <RadioGroupItem value="online" id="online" />
-                                        <Label htmlFor="online" className="flex-1 cursor-pointer">
-                                            <div className="font-medium">Online Payment</div>
-                                            <div className="text-sm text-zinc-500">
-                                                UPI, Cards, Net Banking
+                                        <div className="flex-1">
+                                            <div className="font-bold text-base">Pay Online</div>
+                                            <div className="text-sm text-muted-foreground mt-0.5">
+                                                Cards, UPI, Net Banking via Razorpay
                                             </div>
-                                        </Label>
-                                        <CreditCard className="h-5 w-5 text-zinc-400" />
-                                    </div>
+                                        </div>
+                                        <CreditCard className={`h-6 w-6 ${paymentMethod === 'online' ? 'text-primary' : 'text-zinc-300'}`} />
+                                    </Label>
                                 </div>
                             </RadioGroup>
                         </div>
                     </div>
 
                     {/* Right Column - Order Summary */}
-                    <div className="lg:sticky lg:top-24 lg:self-start">
-                        <div className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
-                            <h2 className="mb-6 text-lg font-bold text-zinc-900 dark:text-zinc-50">
-                                Order Summary
-                            </h2>
+                    <div className="lg:col-span-4">
+                        <div className="sticky top-24">
+                            <div className="rounded-[2rem] border border-border/50 bg-card p-6 md:p-8 shadow-soft">
+                                <h2 className="mb-6 text-xl font-bold text-foreground">
+                                    Your Order
+                                </h2>
 
-                            {/* Cart Items */}
-                            <div className="mb-4 space-y-3">
-                                {cartItems.map((item) => (
-                                    <div key={item.cart_item_id} className="flex items-center gap-3">
-                                        <img
-                                            src={item.product_image || "/placeholder-product.jpg"}
-                                            alt={item.product_name}
-                                            className="h-12 w-12 rounded-lg object-cover bg-zinc-100 dark:bg-zinc-800"
-                                        />
-                                        <div className="flex-1 min-w-0">
-                                            <p className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-50">
-                                                {item.product_name}
-                                            </p>
-                                            <p className="text-xs text-zinc-500">
-                                                {item.size} | {item.color}
-                                            </p>
+                                {/* Cart Items */}
+                                <div className="mb-6 space-y-4 max-h-[300px] overflow-y-auto pr-2 scrollbar-hide">
+                                    {cartItems.map((item) => (
+                                        <div key={item.cart_item_id} className="flex items-center gap-4">
+                                            <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-muted">
+                                                <Image
+                                                    src={item.product_image || "/placeholder-product.jpg"}
+                                                    alt={item.product_name}
+                                                    fill
+                                                    className="object-cover"
+                                                />
+                                                <span className="absolute bottom-0 right-0 h-4 w-4 bg-primary text-[10px] font-bold text-white flex items-center justify-center rounded-tl-md">
+                                                    {item.quantity}
+                                                </span>
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="truncate text-sm font-bold text-foreground">
+                                                    {item.product_name}
+                                                </p>
+                                                <p className="text-xs text-muted-foreground">
+                                                    {item.size} / {item.color}
+                                                </p>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-sm font-bold text-foreground">
+                                                    ₹{(item.price * item.quantity).toFixed(2)}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div className="text-right">
-                                            <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-                                                ₹{(item.price * item.quantity).toFixed(2)}
-                                            </p>
-                                            <p className="text-xs text-zinc-500">
-                                                Qty: {item.quantity}
-                                            </p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                                    ))}
+                                </div>
 
-                            <div className="border-t border-zinc-200 pt-4 dark:border-zinc-700">
-                                <div className="space-y-2 text-sm">
-                                    <div className="flex justify-between">
-                                        <span className="text-zinc-600 dark:text-zinc-400">Subtotal</span>
+                                <div className="border-t border-dashed border-border py-4 space-y-3">
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-muted-foreground">Subtotal</span>
                                         <span className="font-medium">₹{subtotal.toFixed(2)}</span>
                                     </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-zinc-600 dark:text-zinc-400">Shipping</span>
-                                        <span className="font-medium">
-                                            {shipping === 0 ? "FREE" : `₹${shipping.toFixed(2)}`}
-                                        </span>
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-muted-foreground">Shipping</span>
+                                        <span className="font-medium text-primary"> {shipping === 0 ? "FREE" : `₹${shipping.toFixed(2)}`}</span>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div className="mt-4 border-t border-zinc-200 pt-4 dark:border-zinc-700">
-                                <div className="flex justify-between text-lg font-bold">
-                                    <span>Total</span>
-                                    <span>₹{total.toFixed(2)}</span>
+                                <div className="border-t border-border pt-4">
+                                    <div className="flex justify-between items-end mb-6">
+                                        <span className="text-lg font-bold">Total Pay</span>
+                                        <span className="text-2xl font-black text-primary">₹{total.toFixed(2)}</span>
+                                    </div>
+                                </div>
+
+                                <Button
+                                    onClick={handlePlaceOrder}
+                                    disabled={isSubmitting}
+                                    className="w-full rounded-full bg-primary h-14 text-base font-bold text-black hover:bg-primary/90 shadow-lg shadow-primary/25"
+                                >
+                                    {isSubmitting ? (
+                                        <>
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            Processing...
+                                        </>
+                                    ) : (
+                                        `Place Order`
+                                    )}
+                                </Button>
+
+                                <div className="mt-4 flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                                    <Lock className="h-3 w-3" /> Guaranteed Safe Checkout
                                 </div>
                             </div>
-
-                            <Button
-                                onClick={handlePlaceOrder}
-                                disabled={isSubmitting}
-                                className="mt-6 w-full rounded-full bg-primary py-6 text-base font-bold text-black hover:bg-primary/90"
-                            >
-                                {isSubmitting ? (
-                                    <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        Placing Order...
-                                    </>
-                                ) : (
-                                    `Place Order • ₹${total.toFixed(2)}`
-                                )}
-                            </Button>
-
-                            {shipping > 0 && (
-                                <p className="mt-3 text-center text-xs text-zinc-500">
-                                    Free shipping on orders above ₹999
-                                </p>
-                            )}
                         </div>
                     </div>
                 </div>
