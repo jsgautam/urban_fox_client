@@ -7,7 +7,7 @@ import { Zap, ArrowRight } from "lucide-react";
 
 export default function FlashSale() {
     const [isVisible, setIsVisible] = useState(false);
-    const sectionRef = useRef<HTMLElement | null>(null);
+    const sectionRef = useRef<HTMLDivElement | null>(null);
 
     // Countdown timer state
     const [timeLeft, setTimeLeft] = useState({
